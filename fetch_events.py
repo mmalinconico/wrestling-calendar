@@ -15,8 +15,10 @@ soup = BeautifulSoup(response.text, "html.parser")
 
 tables = soup.find_all("table", class_="wikitable")
 
-print("Tables found:", len(tables))
+for i, table in enumerate(tables):
+    text = table.get_text(" ", strip=True)
 
-for i, table in enumerate(tables[:10]):
-    print(f"\n--- TABLE {i} ---")
-    print(table.get_text(" ", strip=True)[:500])
+    if "Night of Champions" in text:
+        print("\nFOUND TABLE:", i)
+        print(text[:3000])
+        break
