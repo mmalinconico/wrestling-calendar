@@ -9,7 +9,6 @@ HEADERS = {
     "User-Agent": "WrestlingCalendarBot/1.0 (personal hobby calendar)"
 }
 
-YEAR = datetime.now().year
 
 
 def clean_text(text):
@@ -18,10 +17,17 @@ def clean_text(text):
 
 
 def parse_date(date_text):
-    return datetime.strptime(
-        f"{date_text} {YEAR}",
+    current_year = datetime.now().year
+
+    parsed = datetime.strptime(
+        f"{date_text} {current_year}",
         "%B %d %Y"
-    ).strftime("%Y-%m-%d")
+    )
+
+    if parsed.date() < datetime.now().date():
+        parsed = parsed.replace(year=current_year + 1)
+
+    return parsed.strftime("%Y-%m-%d")
 
 
 events = []
