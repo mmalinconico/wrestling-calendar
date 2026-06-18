@@ -17,7 +17,6 @@ soup = BeautifulSoup(response.text, "html.parser")
 for heading in soup.find_all(["h2", "h3"]):
 text = heading.get_text(" ", strip=True)
 
-```
 if "Upcoming events" in text:
     print("\nFOUND HEADING:", text)
 
@@ -28,4 +27,3 @@ if "Upcoming events" in text:
         print(table.get_text(" ", strip=True)[:3000])
 
     break
-```
