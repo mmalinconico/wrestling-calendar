@@ -1,4 +1,3 @@
-import json
 import requests
 from bs4 import BeautifulSoup
 
@@ -31,45 +30,13 @@ for heading in soup.find_all(["h2", "h3"]):
 if schedule_table is None:
     raise Exception("Could not find Upcoming event schedule table")
 
-events = []
-
 rows = schedule_table.find_all("tr")
 
-for row in rows[1:]:
+for i, row in enumerate(rows):
     cells = row.find_all(["td", "th"])
 
-    if len(cells) < 4:
-        continue
+    print(f"\nROW {i}")
+    print("CELL COUNT:", len(cells))
 
-    date = cells[0].get_text(" ", strip=True)
-    event_name = cells[1].get_text(" ", strip=True)
-    venue = cells[2].get_text(" ", strip=True)
-    city = cells[3].get_text(" ", strip=True)
-
-    if date == "TBA":
-        continue
-
-    promotion = "NXT" if "Great American Bash" in event_name else "WWE"
-
-    if promotion == "NXT":
-        network = "The CW"
-    elif "Main Event" in event_name:
-        network = "Peacock"
-    else:
-        network = "ESPN"
-
-    events.append({
-        "name": event_name,
-        "date": date,
-        "venue": venue,
-        "city": city,
-        "network": network,
-        "promotion": promotion
-    })
-
-print(json.dumps(events, indent=2))
-
-with open("data/events.json", "w") as f:
-    json.dump(events, f, indent=2)
-
-print(f"Generated {len(events)} events")
+    for j, cell in enumerate(cells):
+        print(f"CELL {j}: {cell.get_text(' ', strip=True)}")
