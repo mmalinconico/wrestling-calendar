@@ -1,3 +1,7 @@
+import json
+import re
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -30,13 +34,92 @@ for heading in soup.find_all(["h2", "h3"]):
 if schedule_table is None:
     raise Exception("Could not find Upcoming event schedule table")
 
+events = []
+
 rows = schedule_table.find_all("tr")
+year = 2026
 
-for i, row in enumerate(rows):
-    cells = row.find_all(["td", "th"])
+i = 1
 
-    print(f"\nROW {i}")
-    print("CELL COUNT:", len(cells))
+while i < len(rows):
+    cells = rows[i].find_all(["td", "th"])
 
-    for j, cell in enumerate(cells):
-        print(f"CELL {j}: {cell.get_text(' ', strip=True)}")
+    if len(cells) < 4:
+        i += 1
+        continue
+
+    date_text = cells[0].get_text(" ", strip=True)
+    event_name = cells[1].get_text(" ", strip=True)
+    venue = cells[2].get_text(" ", strip=True)
+    city = cells[3].get_text(" ", strip=True)
+    notes = cells[4].get_text(" ", strip=True) if len(cells) > 4 else ""
+
+    if date_text == "TBA":
+        i += 1
+        continue
+
+    event_name = re.sub(r"\[\s*\d+\s*\]", "", event_name).strip()
+
+    promotion = "NXT" if "Great American Bash" in event_name else "WWE"
+
+    if promotion == "NXT":
+        network = "The CW"
+    elif "Main Event" in event_name:
+        network = "Peacock"
+    else:
+        network = "ESPN"
+
+    date_obj = datetime.strptime(
+        f"{date_text} {year}",
+        "%B %d %Y"
+    )
+
+    # Handle two-night events
+    if "two-part event" in notes.lower():
+        events.append({
+            "name": f"{event_name} Night 1",
+            "date": date_obj.strftime("%Y-%m-%d"),
+            "venue": venue,
+            "city": city,
+            "network": network,
+            "promotion": promotion
+        })
+
+        if i + 1 < len(rows):
+            next_cells = rows[i + 1].find_all(["td", "th"])
+
+            if len(next_cells) == 1:
+                night2_date = next_cells[0].get_text(" ", strip=True)
+
+                night2_obj = datetime.strptime(
+                    f"{night2_date} {year}",
+                    "%B %d %Y"
+                )
+
+                events.append({
+                    "name": f"{event_name} Night 2",
+                    "date": night2_obj.strftime("%Y-%m-%d"),
+                    "venue": venue,
+                    "city": city,
+                    "network": network,
+                    "promotion": promotion
+                })
+
+                i += 1
+
+    else:
+        events.append({
+            "name": event_name,
+            "date": date_obj.strftime("%Y-%m-%d"),
+            "venue": venue,
+            "city": city,
+            "network": network,
+            "promotion": promotion
+        })
+
+    i += 1
+
+with open("data/events.json", "w") as f:
+    json.dump(events, f, indent=2)
+
+print(f"Generated {len(events)} events")
