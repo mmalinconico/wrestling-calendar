@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from ics import Calendar, Event
 
 calendar = Calendar()
@@ -39,6 +39,9 @@ for item in events:
     calendar.events.add(event)
 
 print(f"Generated {len(calendar.events)} events")
+
+with open("calendar.ics", "w") as f:
+    f.writelines(calendar.serialize_iter())
 
 with open("calendar.ics", "w") as f:
     f.writelines(calendar.serialize_iter())
