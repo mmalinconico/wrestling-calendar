@@ -20,16 +20,13 @@ steps:
       python-version: "3.11"
 
   - name: Install dependencies
-    run: |
-      pip install -r requirements.txt
+    run: pip install -r requirements.txt
 
   - name: Test fetch
-    run: |
-      python fetch_events.py
+    run: python fetch_events.py
 
   - name: Generate calendar
-    run: |
-      python generate_calendar.py
+    run: python generate_calendar.py
 
   - name: Commit updated calendar
     run: |
