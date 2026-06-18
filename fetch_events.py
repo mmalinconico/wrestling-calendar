@@ -157,7 +157,7 @@ for heading in soup.find_all(["h2", "h3"]):
             city = clean_text(cells[2].get_text(" ", strip=True))
             venue = clean_text(cells[3].get_text(" ", strip=True))
 
-            promotion = "ROH" if event_name == "Redemption" else "AEW"
+            promotion = "AEW"
 
             events.append({
                 "name": event_name,
