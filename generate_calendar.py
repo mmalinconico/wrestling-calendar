@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from ics import Calendar, Event
 
 calendar = Calendar()
@@ -18,7 +18,7 @@ for item in events:
     )
 
     event.begin = start_date
-    event.make_all_day()
+    event.end = start_date + timedelta(days=1)
 
     description_parts = []
 
