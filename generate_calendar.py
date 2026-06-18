@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from ics import Calendar, Event
 
 calendar = Calendar()
@@ -15,10 +15,10 @@ for item in events:
     start_date = datetime.strptime(
         item["date"],
         "%Y-%m-%d"
-    )
+    ).date()
 
     event.begin = start_date
-    event.end = start_date + timedelta(days=1)
+    event.make_all_day()
 
     description_parts = []
 
