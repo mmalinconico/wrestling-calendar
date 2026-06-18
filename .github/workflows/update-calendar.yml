@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Fetch events
+        run: python fetch_events.py
+
       - name: Generate calendar
         run: python generate_calendar.py
 
