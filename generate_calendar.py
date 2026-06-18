@@ -10,7 +10,8 @@ with open("data/events.json", "r") as f:
 for item in events:
     event = Event()
 
-    event.name = item["name"]
+    promotion = item.get("promotion", "")
+    event.name = f"{promotion} {item['name']}".strip()
 
     start_date = datetime.strptime(
         item["date"],
@@ -20,21 +21,18 @@ for item in events:
     event.begin = start_date
     event.make_all_day()
 
-    description_parts = []
+    venue = item.get("venue", "")
+    city = item.get("city", "")
 
-    if item.get("venue"):
-        description_parts.append(f"Venue: {item['venue']}")
-
-    if item.get("city"):
-        description_parts.append(f"City: {item['city']}")
+    if venue and city:
+        event.location = f"{venue}, {city}"
+    elif venue:
+        event.location = venue
+    elif city:
+        event.location = city
 
     if item.get("network"):
-        description_parts.append(f"Network: {item['network']}")
-
-    if item.get("promotion"):
-        description_parts.append(f"Promotion: {item['promotion']}")
-
-    event.description = "\n".join(description_parts)
+        event.description = f"Network: {item['network']}"
 
     calendar.events.add(event)
 
