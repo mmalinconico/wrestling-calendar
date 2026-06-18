@@ -18,9 +18,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+            - name: Install dependencies
         run: |
           pip install -r requirements.txt
+
+      - name: Test fetch
+        run: |
+          python fetch_events.py
 
       - name: Generate calendar
         run: |
