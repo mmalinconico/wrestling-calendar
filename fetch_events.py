@@ -17,13 +17,12 @@ for heading in soup.find_all(["h2", "h3"]):
     heading_text = heading.get_text(" ", strip=True)
 
     if "Upcoming event schedule" in heading_text:
-        print("\nFOUND HEADING:")
-        print(heading_text)
+        print("\nFOUND HEADING:", heading_text)
 
-        table = heading.find_next("table")
+        tables = heading.find_all_next("table", limit=5)
 
-        if table:
-            print("\nTABLE CONTENT:")
-            print(table.get_text(" ", strip=True)[:5000])
+        for i, table in enumerate(tables):
+            print(f"\n--- TABLE {i} ---")
+            print(table.get_text(" ", strip=True)[:1000])
 
         break
