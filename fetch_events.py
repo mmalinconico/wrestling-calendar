@@ -67,6 +67,8 @@ for row in rows[1:]:
         "promotion": promotion
     })
 
+print(json.dumps(events, indent=2))
+
 with open("data/events.json", "w") as f:
     json.dump(events, f, indent=2)
 
