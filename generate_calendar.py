@@ -42,6 +42,6 @@ for item in events:
     event.description = "\n".join(description_parts)
 
     calendar.events.add(event)
-
+print(f"Generated {len(calendar.events)} events")
 with open("calendar.ics", "w") as f:
     f.writelines(calendar.serialize_iter())
