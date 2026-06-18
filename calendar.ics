@@ -2,45 +2,52 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20261010
-DESCRIPTION:Venue: Smoothie King Center\nCity: New Orleans\, Louisiana\nNetwork: ESPN\nPromotion: WWE
-SUMMARY:Money in the Bank
-UID:c2c006a2-951b-4b9f-a160-9d921918f07c@c2c0.org
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260718
-DESCRIPTION:Venue: Madison Square Garden\nCity: New York City\, New York\nNetwork: Peacock\nPromotion: WWE
-SUMMARY:Saturday Night's Main Event
-UID:5f0e2770-076a-4777-9df9-11e4df63845c@5f0e.org
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260802
-DESCRIPTION:Venue: U.S. Bank Stadium\nCity: Minneapolis\, Minnesota\nNetwork: ESPN\nPromotion: WWE
-SUMMARY:SummerSlam Night 2
-UID:2fca5513-fcb2-4029-9ce0-ae43b7bcb748@2fca.org
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;VALUE=DATE:20260906
-DESCRIPTION:Venue: State Farm Arena\nCity: Atlanta\, Georgia\nNetwork: Peacock\nPromotion: WWE
-SUMMARY:Sunday Night's Main Event
-UID:574f168c-b669-4757-88e9-43cda812a900@574f.org
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260801
-DESCRIPTION:Venue: U.S. Bank Stadium\nCity: Minneapolis\, Minnesota\nNetwork: ESPN\nPromotion: WWE
-SUMMARY:SummerSlam Night 1
-UID:591eebde-0178-454e-9a26-34679feca72f@591e.org
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260628
-DESCRIPTION:Venue: WWE Performance Center\nCity: Orlando\, Florida\nNetwork: The CW\nPromotion: NXT
-SUMMARY:The Great American Bash
-UID:45c7a637-4474-475d-9783-cbb5aa21e256@45c7.org
+DESCRIPTION:Network: Peacock
+LOCATION:State Farm Arena\, Atlanta\, Georgia
+SUMMARY:WWE Sunday Night's Main Event
+UID:d6f57eff-fece-4c4b-8a13-2bcde836054c@d6f5.org
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20260627
-DESCRIPTION:Venue: Kingdom Arena\nCity: Riyadh\, Saudi Arabia\nNetwork: ESPN\nPromotion: WWE
-SUMMARY:Night of Champions
-UID:e37fc551-66b3-4a0e-ad1a-139520320c2c@e37f.org
+DESCRIPTION:Network: ESPN
+LOCATION:Kingdom Arena\, Riyadh\, Saudi Arabia
+SUMMARY:WWE Night of Champions
+UID:cc4dc96e-3ba5-4d97-96ea-7a25eba4dcb0@cc4d.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20260628
+DESCRIPTION:Network: The CW
+LOCATION:WWE Performance Center\, Orlando\, Florida
+SUMMARY:NXT The Great American Bash
+UID:1b8c67a9-6cdd-4a4a-ae77-d087d2b16f90@1b8c.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20260718
+DESCRIPTION:Network: Peacock
+LOCATION:Madison Square Garden\, New York City\, New York
+SUMMARY:WWE Saturday Night's Main Event
+UID:95a52024-71f1-4ff2-ae77-5b133bb641b0@95a5.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20261010
+DESCRIPTION:Network: ESPN
+LOCATION:Smoothie King Center\, New Orleans\, Louisiana
+SUMMARY:WWE Money in the Bank
+UID:9eb05d52-cecb-4ed1-8a66-5e665907a43c@9eb0.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20260802
+DESCRIPTION:Network: ESPN
+LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
+SUMMARY:WWE SummerSlam Night 2
+UID:d6c0f972-a964-47ca-b3fc-c6d335e308ea@d6c0.org
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20260801
+DESCRIPTION:Network: ESPN
+LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
+SUMMARY:WWE SummerSlam Night 1
+UID:7a3b56be-f17e-4f80-890d-544370008e41@7a3b.org
 END:VEVENT
 END:VCALENDAR
