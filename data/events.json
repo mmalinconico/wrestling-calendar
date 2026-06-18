@@ -16,6 +16,22 @@
     "promotion": "NXT"
   },
   {
+    "name": "Forbidden Door",
+    "date": "2026-06-28",
+    "venue": "SAP Center",
+    "city": "San Jose, California",
+    "network": "PPV",
+    "promotion": "AEW"
+  },
+  {
+    "name": "Redemption",
+    "date": "2026-07-26",
+    "venue": "Bell Centre",
+    "city": "Montreal, Quebec",
+    "network": "PPV",
+    "promotion": "AEW"
+  },
+  {
     "name": "Saturday Night's Main Event",
     "date": "2026-07-18",
     "venue": "Madison Square Garden",
@@ -38,6 +54,14 @@
     "city": "Minneapolis, Minnesota",
     "network": "ESPN",
     "promotion": "WWE"
+  },
+  {
+    "name": "All In",
+    "date": "2026-08-30",
+    "venue": "Wembley Stadium",
+    "city": "London, England",
+    "network": "PPV",
+    "promotion": "AEW"
   },
   {
     "name": "Sunday Night's Main Event",
