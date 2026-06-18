@@ -13,12 +13,17 @@ print("Status:", response.status_code)
 
 soup = BeautifulSoup(response.text, "html.parser")
 
-tables = soup.find_all("table", class_="wikitable")
+for heading in soup.find_all(["h2", "h3"]):
+    heading_text = heading.get_text(" ", strip=True)
 
-for i, table in enumerate(tables):
-    text = table.get_text(" ", strip=True)
+    if "Upcoming event schedule" in heading_text:
+        print("\nFOUND HEADING:")
+        print(heading_text)
 
-    if "Night of Champions" in text:
-        print("\nFOUND TABLE:", i)
-        print(text[:3000])
+        table = heading.find_next("table")
+
+        if table:
+            print("\nTABLE CONTENT:")
+            print(table.get_text(" ", strip=True)[:5000])
+
         break
