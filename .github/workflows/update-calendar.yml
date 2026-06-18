@@ -1,39 +1,37 @@
 name: Update Wrestling Calendar
 
 on:
-workflow_dispatch:
-schedule:
-- cron: '0 12 * * 1'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * 1'
 
 jobs:
-update-calendar:
-runs-on: ubuntu-latest
+  update-calendar:
+    runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Set up Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-  - name: Install dependencies
-    run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-  - name: Generate calendar
-    run: python generate_calendar.py
+      - name: Generate calendar
+        run: python generate_calendar.py
 
-  - name: Commit updated calendar
-    run: |
-      git config user.name "github-actions"
-      git config user.email "github-actions@github.com"
+      - name: Commit updated calendar
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-      git add calendar.ics
+          git add calendar.ics
 
-      git diff --staged --quiet || (
-        git commit -m "Update calendar"
-        git push
-      )
-```
+          git diff --staged --quiet || (
+            git commit -m "Update calendar"
+            git push
+          )
