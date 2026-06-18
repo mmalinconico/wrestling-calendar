@@ -16,10 +16,10 @@ def clean_text(text):
     return " ".join(text.split()).strip()
 
 def parse_date(date_text):
-return datetime.strptime(
-    f"{date_text} {YEAR}",
-    "%B %d %Y"
-).strftime("%Y-%m-%d")
+    return datetime.strptime(
+        f"{date_text} {YEAR}",
+        "%B %d %Y"
+        ).strftime("%Y-%m-%d")
 
 events = []
 
@@ -127,7 +127,7 @@ while i < len(rows):
 
 # -------------------
 
-# AEW
+# AEW / ROH
 
 # -------------------
 
