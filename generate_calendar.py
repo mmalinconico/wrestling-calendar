@@ -1,14 +1,31 @@
+import json
 from datetime import datetime
 from ics import Calendar, Event
 
 calendar = Calendar()
 
-event = Event()
-event.name = "Calendar Test Event"
-event.begin = "2026-01-01 19:00:00"
-event.description = "If you can see this event, the calendar generator is working."
+with open("data/events.json", "r") as f:
+    events = json.load(f)
 
-calendar.events.add(event)
+for item in events:
+    event = Event()
+
+    event.name = item["name"]
+
+    start_time = datetime.strptime(
+        f"{item['date']} {item['time']}",
+        "%Y-%m-%d %H:%M"
+    )
+
+    event.begin = start_time
+
+    event.description = (
+        f"Venue: {item['venue']}\n"
+        f"City: {item['city']}\n"
+        f"Network: {item['network']}"
+    )
+
+    calendar.events.add(event)
 
 with open("calendar.ics", "w") as f:
     f.writelines(calendar.serialize_iter())
