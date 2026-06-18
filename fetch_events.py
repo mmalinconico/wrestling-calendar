@@ -9,7 +9,7 @@ HEADERS = {
     "User-Agent": "WrestlingCalendarBot/1.0 (personal hobby calendar)"
 }
 
-YEAR = 2026
+YEAR = datetime.now().year
 
 
 def clean_text(text):
