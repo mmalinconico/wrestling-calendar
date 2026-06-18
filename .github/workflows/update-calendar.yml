@@ -9,7 +9,6 @@ jobs:
 update-calendar:
 runs-on: ubuntu-latest
 
-```
 steps:
   - name: Checkout repository
     uses: actions/checkout@v4
@@ -21,9 +20,6 @@ steps:
 
   - name: Install dependencies
     run: pip install -r requirements.txt
-
-  - name: Test fetch
-    run: python fetch_events.py
 
   - name: Generate calendar
     run: python generate_calendar.py
@@ -39,4 +35,3 @@ steps:
         git commit -m "Update calendar"
         git push
       )
-```
