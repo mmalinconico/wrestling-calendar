@@ -1,5 +1,10 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Wrestling Calendar//EN
-CALSCALE:GREGORIAN
+PRODID:ics.py - http://git.io/lLljaA
+BEGIN:VEVENT
+DESCRIPTION:If you can see this event\, the calendar generator is working.
+DTSTART:20260101T190000Z
+SUMMARY:Calendar Test Event
+UID:081e3c3c-4c6a-47c2-933a-b0d9c0df68e2@081e.org
+END:VEVENT
 END:VCALENDAR
