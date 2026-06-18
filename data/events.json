@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "name": "WWE Royal Rumble",
+    "date": "2027-01-30",
+    "time": "19:00",
+    "venue": "TBD",
+    "city": "TBD",
+    "network": "Peacock"
+  },
+  {
+    "name": "WWE WrestleMania",
+    "date": "2027-04-10",
+    "time": "19:00",
+    "venue": "TBD",
+    "city": "TBD",
+    "network": "Peacock"
+  }
+]
