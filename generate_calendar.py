@@ -42,6 +42,3 @@ print(f"Generated {len(calendar.events)} events")
 
 with open("calendar.ics", "w") as f:
     f.writelines(calendar.serialize_iter())
-
-with open("calendar.ics", "w") as f:
-    f.writelines(calendar.serialize_iter())
