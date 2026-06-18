@@ -12,13 +12,13 @@ HEADERS = {
 YEAR = 2026
 
 def clean_text(text):
-text = re.sub(r"[\s*\d+\s*]", "", text)
-return " ".join(text.split()).strip()
+    text = re.sub(r"[\s*\d+\s*]", "", text)
+    return " ".join(text.split()).strip()
 
 def parse_date(date_text):
 return datetime.strptime(
-f"{date_text} {YEAR}",
-"%B %d %Y"
+    f"{date_text} {YEAR}",
+    "%B %d %Y"
 ).strftime("%Y-%m-%d")
 
 events = []
