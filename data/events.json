@@ -1,21 +1,5 @@
 [
   {
-    "name": "The Great American Bash",
-    "date": "2026-06-28",
-    "venue": "WWE Performance Center",
-    "city": "Orlando, Florida",
-    "network": "The CW",
-    "promotion": "NXT"
-  },
-  {
-    "name": "Forbidden Door",
-    "date": "2026-06-28",
-    "venue": "SAP Center",
-    "city": "San Jose, California",
-    "network": "PPV",
-    "promotion": "AEW"
-  },
-  {
     "name": "Saturday Night's Main Event",
     "date": "2026-07-18",
     "venue": "Madison Square Garden",
@@ -44,6 +28,14 @@
     "date": "2026-08-02",
     "venue": "U.S. Bank Stadium",
     "city": "Minneapolis, Minnesota",
+    "network": "ESPN",
+    "promotion": "WWE"
+  },
+  {
+    "name": "NXT Heatwave",
+    "date": "2026-08-30",
+    "venue": "Bert Ogden Arena",
+    "city": "Edinburg, Texas",
     "network": "ESPN",
     "promotion": "WWE"
   },
