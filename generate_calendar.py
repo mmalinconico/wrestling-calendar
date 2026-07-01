@@ -11,7 +11,13 @@ for item in events:
     event = Event()
 
     promotion = item.get("promotion", "")
-    event.name = f"{promotion} {item['name']}".strip()
+
+    if promotion and item["name"].startswith(f"{promotion} "):
+        event.name = item["name"]
+    elif promotion:
+        event.name = f"{promotion} {item['name']}"
+    else:
+        event.name = item["name"]
 
     start_date = datetime.strptime(
         item["date"],
