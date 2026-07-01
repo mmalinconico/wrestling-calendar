@@ -10,7 +10,6 @@ HEADERS = {
 }
 
 
-
 def clean_text(text):
     text = re.sub(r"\[\s*\d+\s*\]", "", text)
     return " ".join(text.split()).strip()
@@ -80,7 +79,12 @@ if schedule_table:
             i += 1
             continue
 
-        promotion = "NXT" if "Great American Bash" in event_name else "WWE"
+        promotion = (
+            "NXT"
+            if event_name.startswith("NXT")
+            or "Great American Bash" in event_name
+            else "WWE"
+        )
 
         if promotion == "NXT":
             network = "The CW"
