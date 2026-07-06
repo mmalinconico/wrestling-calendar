@@ -133,7 +133,7 @@ if schedule_table:
         i += 1
 
 # -------------------
-# AEW / ROH
+# AEW
 # -------------------
 
 aew_url = "https://en.wikipedia.org/wiki/List_of_All_Elite_Wrestling_pay-per-view_events"
@@ -161,7 +161,45 @@ for heading in soup.find_all(["h2", "h3"]):
             city = clean_text(cells[2].get_text(" ", strip=True))
             venue = clean_text(cells[3].get_text(" ", strip=True))
 
-            promotion = "AEW"
+            events.append({
+                "name": event_name,
+                "date": parse_date(date_text),
+                "venue": venue,
+                "city": city,
+                "network": "PPV",
+                "promotion": "AEW"
+            })
+
+        break
+
+# -------------------
+# ROH
+# -------------------
+
+roh_url = "https://en.wikipedia.org/wiki/List_of_Ring_of_Honor_pay-per-view_and_livestreaming_events"
+
+response = requests.get(roh_url, headers=HEADERS)
+response.raise_for_status()
+
+soup = BeautifulSoup(response.text, "html.parser")
+
+for heading in soup.find_all(["h2", "h3"]):
+    if "Upcoming" in heading.get_text(" ", strip=True):
+
+        table = heading.find_next("table")
+
+        rows = table.find_all("tr")
+
+        for row in rows[1:]:
+            cells = row.find_all(["td", "th"])
+
+            if len(cells) < 4:
+                continue
+
+            date_text = clean_text(cells[0].get_text(" ", strip=True))
+            event_name = clean_text(cells[1].get_text(" ", strip=True))
+            venue = clean_text(cells[2].get_text(" ", strip=True))
+            city = clean_text(cells[3].get_text(" ", strip=True))
 
             events.append({
                 "name": event_name,
@@ -169,7 +207,7 @@ for heading in soup.find_all(["h2", "h3"]):
                 "venue": venue,
                 "city": city,
                 "network": "PPV",
-                "promotion": promotion
+                "promotion": "ROH"
             })
 
         break
