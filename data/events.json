@@ -56,6 +56,14 @@
     "promotion": "WWE"
   },
   {
+    "name": "All Out",
+    "date": "2026-09-26",
+    "venue": "Now Arena",
+    "city": "Chicago, Illinois",
+    "network": "PPV",
+    "promotion": "AEW"
+  },
+  {
     "name": "Money in the Bank",
     "date": "2026-10-10",
     "venue": "Smoothie King Center",
