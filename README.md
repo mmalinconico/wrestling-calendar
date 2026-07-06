@@ -1,6 +1,7 @@
 # Wrestling Calendar
 
 An automatically updating iCalendar (.ics) subscription for major professional wrestling events.
+Subscribe once and your calendar stays automatically up to date.
 
 ## Included Promotions
 
