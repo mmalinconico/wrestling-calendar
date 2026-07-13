@@ -78,5 +78,21 @@
     "city": "New Orleans, Louisiana",
     "network": "ESPN",
     "promotion": "WWE"
+  },
+  {
+    "name": "Full Gear",
+    "date": "2026-11-14",
+    "venue": "Mortgage Matchup Center",
+    "city": "Phoenix, Arizona",
+    "network": "PPV",
+    "promotion": "AEW"
+  },
+  {
+    "name": "Survivor Series: WarGames",
+    "date": "2026-11-28",
+    "venue": "Daikin Park",
+    "city": "Houston, Texas",
+    "network": "ESPN",
+    "promotion": "WWE"
   }
 ]
