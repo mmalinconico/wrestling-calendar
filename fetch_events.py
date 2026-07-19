@@ -93,6 +93,11 @@ if schedule_table:
         else:
             network = "ESPN"
 
+        # Manual overrides
+        if event_name == "Worlds Collide":
+            promotion = "WWE/AAA"
+            network = "YouTube"
+
         if "two-part event" in notes.lower():
             events.append({
                 "name": f"{event_name} Night 1",
