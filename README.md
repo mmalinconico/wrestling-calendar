@@ -7,11 +7,11 @@ Subscribe once and your calendar stays automatically up to date.
 ## Included Events
 
 - WWE Premium Live Events (PLEs)
-- Saturday Night's Main Event
-- Sunday Night's Main Event
-- NXT Premium Live Events
-- AEW Pay-Per-Views
-- Ring of Honor (ROH) Pay-Per-Views
+- WWE Saturday/Sunday Night's Main Events
+- NXT Premium Live Events (PLEs)
+- WWE/AAA Supercards
+- AEW Pay-Per-Views (PPVs)
+- ROH Pay-Per-Views (PPVs)
 
 Weekly television shows and television specials are intentionally excluded to keep the calendar focused on major events.
 
