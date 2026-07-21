@@ -32,20 +32,20 @@
     "promotion": "ROH"
   },
   {
-    "name": "NXT Heatwave",
-    "date": "2026-08-30",
-    "venue": "Bert Ogden Arena",
-    "city": "Edinburg, Texas",
-    "network": "The CW",
-    "promotion": "NXT"
-  },
-  {
     "name": "All In",
     "date": "2026-08-30",
     "venue": "Wembley Stadium",
     "city": "London, England",
     "network": "PPV",
     "promotion": "AEW"
+  },
+  {
+    "name": "NXT Heatwave",
+    "date": "2026-08-30",
+    "venue": "Bert Ogden Arena",
+    "city": "Edinburg, Texas",
+    "network": "The CW",
+    "promotion": "NXT"
   },
   {
     "name": "Sunday Night's Main Event",
@@ -56,20 +56,20 @@
     "promotion": "WWE"
   },
   {
-    "name": "Worlds Collide",
-    "date": "2026-09-26",
-    "venue": "Allstate Arena",
-    "city": "Rosemont, Illinois",
-    "network": "YouTube",
-    "promotion": "WWE/AAA"
-  },
-  {
     "name": "All Out",
     "date": "2026-09-26",
     "venue": "Now Arena",
     "city": "Chicago, Illinois",
     "network": "PPV",
     "promotion": "AEW"
+  },
+  {
+    "name": "Worlds Collide",
+    "date": "2026-09-26",
+    "venue": "Allstate Arena",
+    "city": "Rosemont, Illinois",
+    "network": "YouTube",
+    "promotion": "WWE/AAA"
   },
   {
     "name": "Money in the Bank",
