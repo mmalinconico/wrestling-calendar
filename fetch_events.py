@@ -21,13 +21,16 @@ def clean_text(text):
 
 def parse_date(date_text):
     current_year = datetime.now().year
+    today = date.today()
 
     parsed = datetime.strptime(
         f"{date_text} {current_year}",
         "%B %d %Y"
     )
 
-    if parsed.date() < datetime.now().date():
+    # Keep dates from the last seven days in the current year.
+    # Older dates are assumed to refer to the next calendar year.
+    if parsed.date() < today - timedelta(days=PAST_EVENT_RETENTION_DAYS):
         parsed = parsed.replace(year=current_year + 1)
 
     return parsed.strftime("%Y-%m-%d")
@@ -318,6 +321,7 @@ for heading in soup.find_all(["h2", "h3"]):
 # -------------------
 
 today = date.today()
+
 retention_start = today - timedelta(
     days=PAST_EVENT_RETENTION_DAYS
 )
