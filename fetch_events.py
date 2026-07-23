@@ -21,7 +21,9 @@ AAA_INCLUDED_EVENT_NAMES = {
 
 def clean_text(text):
     text = re.sub(r"\[\s*\d+\s*\]", "", text)
-    return " ".join(text.split()).strip()
+    text = " ".join(text.split()).strip()
+    text = re.sub(r"\s+([,.;:])", r"\1", text)
+    return text
 
 
 def normalize_text(text):
@@ -398,7 +400,7 @@ if upcoming_heading:
                 "date": parse_date(month_day, year=year),
                 "venue": venue or "TBA",
                 "city": city or "TBA",
-                "network": "TBA",
+                "network": "YouTube",
                 "promotion": "AAA"
             })
 
