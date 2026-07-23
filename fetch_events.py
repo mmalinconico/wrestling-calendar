@@ -1,5 +1,6 @@
 import json
 import re
+import unicodedata
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -13,15 +14,37 @@ HEADERS = {
 EVENTS_FILE = Path("data/events.json")
 PAST_EVENT_RETENTION_DAYS = 7
 
+AAA_INCLUDED_EVENT_NAMES = {
+    "eternal glory"
+}
+
 
 def clean_text(text):
     text = re.sub(r"\[\s*\d+\s*\]", "", text)
     return " ".join(text.split()).strip()
 
 
-def parse_date(date_text):
-    current_year = datetime.now().year
+def normalize_text(text):
+    normalized = unicodedata.normalize("NFKD", text)
+    normalized = "".join(
+        character
+        for character in normalized
+        if not unicodedata.combining(character)
+    )
+    return clean_text(normalized).casefold()
+
+
+def parse_date(date_text, year=None):
     today = date.today()
+
+    if year is not None:
+        parsed = datetime.strptime(
+            f"{date_text} {year}",
+            "%B %d %Y"
+        )
+        return parsed.strftime("%Y-%m-%d")
+
+    current_year = datetime.now().year
 
     parsed = datetime.strptime(
         f"{date_text} {current_year}",
@@ -34,6 +57,19 @@ def parse_date(date_text):
         parsed = parsed.replace(year=current_year + 1)
 
     return parsed.strftime("%Y-%m-%d")
+
+
+def extract_month_day(date_text):
+    match = re.match(
+        r"^(January|February|March|April|May|June|July|August|"
+        r"September|October|November|December)\s+\d{1,2}\b",
+        clean_text(date_text)
+    )
+
+    if not match:
+        return None
+
+    return match.group(0)
 
 
 def event_key(event):
@@ -59,6 +95,95 @@ def load_previous_events():
         print(f"Could not load previous events: {error}")
 
     return []
+
+
+def find_table_before_next_heading(heading):
+    element = heading.find_next()
+
+    while element:
+        if element.name in ("h2", "h3"):
+            return None
+
+        if element.name == "table":
+            return element
+
+        element = element.find_next()
+
+    return None
+
+
+def expand_table_rows(table):
+    expanded_rows = []
+    pending_rowspans = {}
+
+    for row in table.find_all("tr"):
+        cells = row.find_all(["th", "td"], recursive=False)
+
+        expanded = []
+        previous_rowspans = pending_rowspans
+        pending_rowspans = {}
+
+        column_index = 0
+        cell_index = 0
+
+        while cell_index < len(cells) or previous_rowspans:
+            if column_index in previous_rowspans:
+                value, rows_remaining = previous_rowspans.pop(
+                    column_index
+                )
+
+                expanded.append(value)
+
+                if rows_remaining > 1:
+                    pending_rowspans[column_index] = (
+                        value,
+                        rows_remaining - 1
+                    )
+
+                column_index += 1
+                continue
+
+            if cell_index < len(cells):
+                cell = cells[cell_index]
+                value = clean_text(
+                    cell.get_text(" ", strip=True)
+                )
+
+                rowspan = int(cell.get("rowspan", 1))
+                colspan = int(cell.get("colspan", 1))
+
+                for _ in range(colspan):
+                    expanded.append(value)
+
+                    if rowspan > 1:
+                        pending_rowspans[column_index] = (
+                            value,
+                            rowspan - 1
+                        )
+
+                    column_index += 1
+
+                cell_index += 1
+                continue
+
+            next_column = min(previous_rowspans)
+
+            while column_index < next_column:
+                expanded.append("")
+                column_index += 1
+
+        expanded_rows.append(expanded)
+
+    return expanded_rows
+
+
+def is_included_aaa_event(event_name):
+    normalized_name = normalize_text(event_name)
+
+    return (
+        normalized_name.startswith("triplemania")
+        or normalized_name in AAA_INCLUDED_EVENT_NAMES
+    )
 
 
 previous_events = load_previous_events()
@@ -199,6 +324,102 @@ if schedule_table:
             })
 
         i += 1
+
+# -------------------
+# AAA
+# -------------------
+
+aaa_url = (
+    "https://en.wikipedia.org/wiki/"
+    "List_of_major_Lucha_Libre_AAA_Worldwide_events"
+)
+
+response = requests.get(
+    aaa_url,
+    headers=HEADERS,
+    timeout=30
+)
+response.raise_for_status()
+
+soup = BeautifulSoup(response.text, "html.parser")
+
+aaa_rows = []
+upcoming_heading = None
+
+for heading in soup.find_all("h2"):
+    if "Upcoming event schedule" in heading.get_text(" ", strip=True):
+        upcoming_heading = heading
+        break
+
+if upcoming_heading:
+    for heading in upcoming_heading.find_all_next(["h2", "h3"]):
+        if heading is upcoming_heading:
+            continue
+
+        if heading.name == "h2":
+            break
+
+        year_text = clean_text(
+            heading.get_text(" ", strip=True)
+        )
+
+        if not re.fullmatch(r"\d{4}", year_text):
+            continue
+
+        year = int(year_text)
+        table = find_table_before_next_heading(heading)
+
+        if not table:
+            continue
+
+        expanded_rows = expand_table_rows(table)
+
+        for cells in expanded_rows[1:]:
+            if len(cells) < 4:
+                continue
+
+            date_text = cells[0]
+            event_name = cells[1]
+            city = cells[2]
+            venue = cells[3]
+
+            if not is_included_aaa_event(event_name):
+                continue
+
+            month_day = extract_month_day(date_text)
+
+            # Eternal Glory is approved, but it will not be added
+            # until Wikipedia lists a complete month-and-day date.
+            if not month_day:
+                continue
+
+            aaa_rows.append({
+                "name": event_name,
+                "date": parse_date(month_day, year=year),
+                "venue": venue or "TBA",
+                "city": city or "TBA",
+                "network": "TBA",
+                "promotion": "AAA"
+            })
+
+aaa_event_counts = {}
+
+for event in aaa_rows:
+    name = event["name"]
+    aaa_event_counts[name] = aaa_event_counts.get(name, 0) + 1
+
+aaa_event_numbers = {}
+
+for event in aaa_rows:
+    name = event["name"]
+
+    if aaa_event_counts[name] > 1:
+        aaa_event_numbers[name] = aaa_event_numbers.get(name, 0) + 1
+        event["name"] = (
+            f"{name} Night {aaa_event_numbers[name]}"
+        )
+
+    events.append(event)
 
 # -------------------
 # AEW
