@@ -48,8 +48,9 @@ A scheduled GitHub Actions workflow retrieves the latest event data, rebuilds th
 ## Data Sources
 
 - Wikipedia — WWE
+- Wikipedia — AAA
 - Wikipedia — AEW
-- Wikipedia — Ring of Honor (ROH)
+- Wikipedia — ROH
 
 ## Disclaimer
 
