@@ -11,6 +11,7 @@ Subscribe once, and your calendar stays up to date as event dates, venues, locat
 - WWE Sunday Night’s Main Event
 - NXT Premium Live Events (PLEs)
 - WWE/AAA Supercards
+- Select AAA special events
 - AEW Pay-Per-Views (PPVs)
 - ROH Pay-Per-Views (PPVs)
 
