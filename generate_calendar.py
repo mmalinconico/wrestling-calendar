@@ -1,124 +1,68 @@
 import json
 import re
-import unicodedata
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ics import Calendar, Event
 
-
-def normalize_uid_component(value):
-    normalized = unicodedata.normalize(
-        "NFKD",
-        str(value),
-    )
-
-    ascii_text = normalized.encode(
-        "ascii",
-        "ignore",
-    ).decode("ascii")
-
-    component = re.sub(
-        r"[^a-z0-9]+",
-        "-",
-        ascii_text.lower(),
-    ).strip("-")
-
-    return component or "unknown"
-
-
-def build_event_uid(item):
-    promotion = normalize_uid_component(
-        item.get("promotion", "wrestling")
-    )
-
-    name = normalize_uid_component(
-        item.get("name", "event")
-    )
-
-    event_date = normalize_uid_component(
-        item.get("date", "unknown-date")
-    )
-
-    # Avoid repeating the promotion when it is already part
-    # of the event name, such as "NXT Heatwave."
-    if (
-        name == promotion
-        or name.startswith(f"{promotion}-")
-    ):
-        event_identity = name
-    else:
-        event_identity = f"{promotion}-{name}"
-
-    return (
-        f"wrestling-{event_identity}-{event_date}"
-        "@mmalinconico.github.io"
-    )
-
-
 calendar = Calendar()
 
-with open(
-    "data/events.json",
-    "r",
-    encoding="utf-8",
-) as f:
+with open("data/events.json", "r", encoding="utf-8") as f:
     events = json.load(f)
 
 for item in events:
     event = Event()
+    event.name = item["name"]
 
-    promotion = item.get("promotion", "")
-    event_name = item["name"]
-
-    if (
-        promotion
-        and event_name.lower().startswith(
-            f"{promotion.lower()} "
-        )
-    ):
-        event.name = event_name
-    elif promotion:
-        event.name = f"{promotion} {event_name}"
+    if item.get("all_day"):
+        event.begin = item["date"]
+        event.make_all_day()
     else:
-        event.name = event_name
+        start = datetime.fromisoformat(
+            item["date"].replace("Z", "+00:00")
+        )
 
-    start_date = datetime.strptime(
-        item["date"],
-        "%Y-%m-%d",
-    ).date()
+        event.begin = start
+        event.end = start + timedelta(hours=4)
 
-    event.begin = start_date
-    event.make_all_day()
+    if item.get("uid"):
+        event.uid = item["uid"]
+    else:
+        uid_name = re.sub(
+            r"[^a-z0-9]+",
+            "-",
+            item["name"].lower(),
+        ).strip("-")
 
-    # Use an explicitly supplied UID when available.
-    # Otherwise derive a repeatable UID from the event information.
-    event.uid = (
-        item.get("uid")
-        or build_event_uid(item)
-    )
+        event.uid = (
+            f"{uid_name}-"
+            f"{item['id']}"
+        )
 
-    venue = item.get("venue", "")
-    city = item.get("city", "")
+    location_parts = []
 
-    if venue and city:
-        event.location = f"{venue}, {city}"
-    elif venue:
-        event.location = venue
-    elif city:
-        event.location = city
+    if item.get("venue"):
+        location_parts.append(item["venue"])
+
+    if item.get("city"):
+        location_parts.append(item["city"])
+
+    event.location = ", ".join(location_parts)
+
+    description = []
 
     if item.get("network"):
-        event.description = (
+        description.append(
             f"Network: {item['network']}"
         )
 
+    if item.get("status"):
+        description.append(item["status"])
+
+    event.description = "\n".join(description)
+
     calendar.events.add(event)
 
-print(f"Generated {len(calendar.events)} events")
+with open("nfl-playoffs.ics", "w", encoding="utf-8") as f:
+    f.writelines(calendar)
 
-with open(
-    "calendar.ics",
-    "w",
-    encoding="utf-8",
-) as f:
-    f.writelines(calendar.serialize_iter())
+print(f"Generated calendar with {len(events)} events")
