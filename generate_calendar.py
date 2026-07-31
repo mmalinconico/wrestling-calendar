@@ -9,18 +9,18 @@ from ics import Calendar, Event
 def normalize_uid_component(value):
     normalized = unicodedata.normalize(
         "NFKD",
-        str(value)
+        str(value),
     )
 
     ascii_text = normalized.encode(
         "ascii",
-        "ignore"
+        "ignore",
     ).decode("ascii")
 
     component = re.sub(
         r"[^a-z0-9]+",
         "-",
-        ascii_text.lower()
+        ascii_text.lower(),
     ).strip("-")
 
     return component or "unknown"
@@ -39,8 +39,18 @@ def build_event_uid(item):
         item.get("date", "unknown-date")
     )
 
+    # Avoid repeating the promotion when it is already part
+    # of the event name, such as "NXT Heatwave."
+    if (
+        name == promotion
+        or name.startswith(f"{promotion}-")
+    ):
+        event_identity = name
+    else:
+        event_identity = f"{promotion}-{name}"
+
     return (
-        f"wrestling-{promotion}-{name}-{event_date}"
+        f"wrestling-{event_identity}-{event_date}"
         "@mmalinconico.github.io"
     )
 
@@ -50,7 +60,7 @@ calendar = Calendar()
 with open(
     "data/events.json",
     "r",
-    encoding="utf-8"
+    encoding="utf-8",
 ) as f:
     events = json.load(f)
 
@@ -58,20 +68,23 @@ for item in events:
     event = Event()
 
     promotion = item.get("promotion", "")
+    event_name = item["name"]
 
     if (
         promotion
-        and item["name"].startswith(f"{promotion} ")
+        and event_name.lower().startswith(
+            f"{promotion.lower()} "
+        )
     ):
-        event.name = item["name"]
+        event.name = event_name
     elif promotion:
-        event.name = f"{promotion} {item['name']}"
+        event.name = f"{promotion} {event_name}"
     else:
-        event.name = item["name"]
+        event.name = event_name
 
     start_date = datetime.strptime(
         item["date"],
-        "%Y-%m-%d"
+        "%Y-%m-%d",
     ).date()
 
     event.begin = start_date
@@ -106,6 +119,6 @@ print(f"Generated {len(calendar.events)} events")
 with open(
     "calendar.ics",
     "w",
-    encoding="utf-8"
+    encoding="utf-8",
 ) as f:
     f.writelines(calendar.serialize_iter())
