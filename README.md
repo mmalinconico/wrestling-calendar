@@ -7,8 +7,8 @@ Subscribe once, and your calendar stays up to date as event dates, venues, locat
 ## Included Events
 
 - WWE Premium Live Events (PLEs)
-- WWE Saturday Night’s Main Event
-- WWE Sunday Night’s Main Event
+- WWE Saturday Night’s Main Events
+- WWE Sunday Night’s Main Events
 - NXT Premium Live Events (PLEs)
 - WWE/AAA Supercards
 - Select AAA special events
