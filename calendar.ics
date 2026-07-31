@@ -1,102 +1,135 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:ics.py - http://git.io/lLljaA
+PRODID:-//Matt Malinconico//Wrestling Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Wrestling Calendar
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260802
-DESCRIPTION:Network: ESPN
-LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
-SUMMARY:WWE SummerSlam Night 2
-UID:wrestling-wwe-summerslam-night-2-2026-08-02@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20261010
-DESCRIPTION:Network: ESPN
-LOCATION:Smoothie King Center\, New Orleans\, Louisiana
-SUMMARY:WWE Money in the Bank
-UID:wrestling-wwe-money-in-the-bank-2026-10-10@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20261128
-DESCRIPTION:Network: ESPN
-LOCATION:Daikin Park\, Houston\, Texas
-SUMMARY:WWE Survivor Series: WarGames
-UID:wrestling-wwe-survivor-series-wargames-2026-11-28@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
+UID:wrestling-aew-redemption-2026-07-26@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20260726
+DTEND;VALUE=DATE:20260727
+SUMMARY:AEW Redemption
 DESCRIPTION:Network: PPV
 LOCATION:Bell Centre\, Montreal\, Quebec\, Canada
-SUMMARY:AEW Redemption
-UID:wrestling-aew-redemption-2026-07-26@mmalinconico.github.io
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260911
-DESCRIPTION:Network: YouTube
-LOCATION:MGM Grand Garden Arena\, Paradise\, Nevada\, U.S.
-SUMMARY:AAA Triplemanía 34 Night 1
-UID:wrestling-aaa-triplemania-34-night-1-2026-09-11@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260926
-DESCRIPTION:Network: PPV
-LOCATION:Now Arena\, Chicago\, Illinois
-SUMMARY:AEW All Out
-UID:wrestling-aew-all-out-2026-09-26@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260830
-DESCRIPTION:Network: The CW
-LOCATION:Bert Ogden Arena\, Edinburg\, Texas
-SUMMARY:NXT Heatwave
-UID:wrestling-nxt-heatwave-2026-08-30@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260913
-DESCRIPTION:Network: YouTube
-LOCATION:Arena CDMX\, Azcapotzalco\, Mexico City\, Mexico
-SUMMARY:AAA Triplemanía 34 Night 2
-UID:wrestling-aaa-triplemania-34-night-2-2026-09-13@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260926
-DESCRIPTION:Network: YouTube
-LOCATION:Allstate Arena\, Rosemont\, Illinois
-SUMMARY:WWE/AAA Worlds Collide
-UID:wrestling-wwe-aaa-worlds-collide-2026-09-26@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
+UID:wrestling-wwe-summerslam-night-1-2026-08-01@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20260801
+DTEND;VALUE=DATE:20260802
+SUMMARY:WWE SummerSlam Night 1
 DESCRIPTION:Network: ESPN
 LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
-SUMMARY:WWE SummerSlam Night 1
-UID:wrestling-wwe-summerslam-night-1-2026-08-01@mmalinconico.github.io
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20261114
-DESCRIPTION:Network: PPV
-LOCATION:Mortgage Matchup Center\, Phoenix\, Arizona
-SUMMARY:AEW Full Gear
-UID:wrestling-aew-full-gear-2026-11-14@mmalinconico.github.io
+UID:wrestling-wwe-summerslam-night-2-2026-08-02@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260802
+DTEND;VALUE=DATE:20260803
+SUMMARY:WWE SummerSlam Night 2
+DESCRIPTION:Network: ESPN
+LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260906
-DESCRIPTION:Network: Peacock
-LOCATION:State Farm Arena\, Atlanta\, Georgia
-SUMMARY:WWE Sunday Night's Main Event
-UID:wrestling-wwe-sunday-night-s-main-event-2026-09-06@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
+UID:wrestling-roh-death-before-dishonor-2026-08-21@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:ROH Death Before Dishonor
 DESCRIPTION:Network: PPV
 LOCATION:2300 Arena\, Philadelphia\, Pennsylvania
-SUMMARY:ROH Death Before Dishonor
-UID:wrestling-roh-death-before-dishonor-2026-08-21@mmalinconico.github.io
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-aew-all-in-2026-08-30@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:AEW All In
 DESCRIPTION:Network: PPV
 LOCATION:Wembley Stadium\, London\, England
-SUMMARY:AEW All In
-UID:wrestling-aew-all-in-2026-08-30@mmalinconico.github.io
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-nxt-heatwave-2026-08-30@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:NXT Heatwave
+DESCRIPTION:Network: The CW
+LOCATION:Bert Ogden Arena\, Edinburg\, Texas
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-wwe-sunday-night-s-main-event-2026-09-06@mmalinconico.github.
+ io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260906
+DTEND;VALUE=DATE:20260907
+SUMMARY:WWE Sunday Night's Main Event
+DESCRIPTION:Network: Peacock
+LOCATION:State Farm Arena\, Atlanta\, Georgia
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-aaa-triplemania-34-night-1-2026-09-11@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260911
+DTEND;VALUE=DATE:20260912
+SUMMARY:AAA Triplemanía 34 Night 1
+DESCRIPTION:Network: YouTube
+LOCATION:MGM Grand Garden Arena\, Paradise\, Nevada\, U.S.
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-aaa-triplemania-34-night-2-2026-09-13@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260913
+DTEND;VALUE=DATE:20260914
+SUMMARY:AAA Triplemanía 34 Night 2
+DESCRIPTION:Network: YouTube
+LOCATION:Arena CDMX\, Azcapotzalco\, Mexico City\, Mexico
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-aew-all-out-2026-09-26@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260926
+DTEND;VALUE=DATE:20260927
+SUMMARY:AEW All Out
+DESCRIPTION:Network: PPV
+LOCATION:Now Arena\, Chicago\, Illinois
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-wwe-aaa-worlds-collide-2026-09-26@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20260926
+DTEND;VALUE=DATE:20260927
+SUMMARY:WWE/AAA Worlds Collide
+DESCRIPTION:Network: YouTube
+LOCATION:Allstate Arena\, Rosemont\, Illinois
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-wwe-money-in-the-bank-2026-10-10@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20261010
+DTEND;VALUE=DATE:20261011
+SUMMARY:WWE Money in the Bank
+DESCRIPTION:Network: ESPN
+LOCATION:Smoothie King Center\, New Orleans\, Louisiana
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-aew-full-gear-2026-11-14@mmalinconico.github.io
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:AEW Full Gear
+DESCRIPTION:Network: PPV
+LOCATION:Mortgage Matchup Center\, Phoenix\, Arizona
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-wwe-survivor-series-wargames-2026-11-28@mmalinconico.github.i
+ o
+DTSTAMP:20260731T221637Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:WWE Survivor Series: WarGames
+DESCRIPTION:Network: ESPN
+LOCATION:Daikin Park\, Houston\, Texas
 END:VEVENT
 END:VCALENDAR

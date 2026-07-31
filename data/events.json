@@ -5,7 +5,9 @@
     "venue": "Bell Centre",
     "city": "Montreal, Quebec, Canada",
     "network": "PPV",
-    "promotion": "AEW"
+    "promotion": "AEW",
+    "uid": "wrestling-aew-redemption-2026-07-26@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "SummerSlam Night 1",
@@ -13,7 +15,9 @@
     "venue": "U.S. Bank Stadium",
     "city": "Minneapolis, Minnesota",
     "network": "ESPN",
-    "promotion": "WWE"
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-summerslam-night-1-2026-08-01@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "SummerSlam Night 2",
@@ -21,23 +25,29 @@
     "venue": "U.S. Bank Stadium",
     "city": "Minneapolis, Minnesota",
     "network": "ESPN",
-    "promotion": "WWE"
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-summerslam-night-2-2026-08-02@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
-    "name": "Death Before Dishonor",
     "date": "2026-08-21",
+    "name": "Death Before Dishonor",
     "venue": "2300 Arena",
     "city": "Philadelphia, Pennsylvania",
     "network": "PPV",
-    "promotion": "ROH"
+    "promotion": "ROH",
+    "uid": "wrestling-roh-death-before-dishonor-2026-08-21@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "All In",
     "date": "2026-08-30",
-    "venue": "Wembley Stadium",
     "city": "London, England",
+    "venue": "Wembley Stadium",
     "network": "PPV",
-    "promotion": "AEW"
+    "promotion": "AEW",
+    "uid": "wrestling-aew-all-in-2026-08-30@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "NXT Heatwave",
@@ -45,7 +55,9 @@
     "venue": "Bert Ogden Arena",
     "city": "Edinburg, Texas",
     "network": "The CW",
-    "promotion": "NXT"
+    "promotion": "NXT",
+    "uid": "wrestling-nxt-heatwave-2026-08-30@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Sunday Night's Main Event",
@@ -53,7 +65,9 @@
     "venue": "State Farm Arena",
     "city": "Atlanta, Georgia",
     "network": "Peacock",
-    "promotion": "WWE"
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-sunday-night-s-main-event-2026-09-06@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Triplemanía 34 Night 1",
@@ -61,7 +75,9 @@
     "venue": "MGM Grand Garden Arena",
     "city": "Paradise, Nevada, U.S.",
     "network": "YouTube",
-    "promotion": "AAA"
+    "promotion": "AAA",
+    "uid": "wrestling-aaa-triplemania-34-night-1-2026-09-11@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Triplemanía 34 Night 2",
@@ -69,15 +85,19 @@
     "venue": "Arena CDMX",
     "city": "Azcapotzalco, Mexico City, Mexico",
     "network": "YouTube",
-    "promotion": "AAA"
+    "promotion": "AAA",
+    "uid": "wrestling-aaa-triplemania-34-night-2-2026-09-13@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "All Out",
     "date": "2026-09-26",
-    "venue": "Now Arena",
     "city": "Chicago, Illinois",
+    "venue": "Now Arena",
     "network": "PPV",
-    "promotion": "AEW"
+    "promotion": "AEW",
+    "uid": "wrestling-aew-all-out-2026-09-26@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Worlds Collide",
@@ -85,7 +105,9 @@
     "venue": "Allstate Arena",
     "city": "Rosemont, Illinois",
     "network": "YouTube",
-    "promotion": "WWE/AAA"
+    "promotion": "WWE/AAA",
+    "uid": "wrestling-wwe-aaa-worlds-collide-2026-09-26@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Money in the Bank",
@@ -93,15 +115,19 @@
     "venue": "Smoothie King Center",
     "city": "New Orleans, Louisiana",
     "network": "ESPN",
-    "promotion": "WWE"
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-money-in-the-bank-2026-10-10@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Full Gear",
     "date": "2026-11-14",
-    "venue": "Mortgage Matchup Center",
     "city": "Phoenix, Arizona",
+    "venue": "Mortgage Matchup Center",
     "network": "PPV",
-    "promotion": "AEW"
+    "promotion": "AEW",
+    "uid": "wrestling-aew-full-gear-2026-11-14@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   },
   {
     "name": "Survivor Series: WarGames",
@@ -109,6 +135,8 @@
     "venue": "Daikin Park",
     "city": "Houston, Texas",
     "network": "ESPN",
-    "promotion": "WWE"
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-survivor-series-wargames-2026-11-28@mmalinconico.github.io",
+    "dtstamp": "20260731T221637Z"
   }
 ]
