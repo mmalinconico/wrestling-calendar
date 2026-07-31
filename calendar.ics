@@ -2,13 +2,6 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20260830
-DESCRIPTION:Network: The CW
-LOCATION:Bert Ogden Arena\, Edinburg\, Texas
-SUMMARY:NXT Heatwave
-UID:wrestling-nxt-nxt-heatwave-2026-08-30@mmalinconico.github.io
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;VALUE=DATE:20260802
 DESCRIPTION:Network: ESPN
 LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
@@ -49,6 +42,13 @@ DESCRIPTION:Network: PPV
 LOCATION:Now Arena\, Chicago\, Illinois
 SUMMARY:AEW All Out
 UID:wrestling-aew-all-out-2026-09-26@mmalinconico.github.io
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20260830
+DESCRIPTION:Network: The CW
+LOCATION:Bert Ogden Arena\, Edinburg\, Texas
+SUMMARY:NXT Heatwave
+UID:wrestling-nxt-heatwave-2026-08-30@mmalinconico.github.io
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20260913
