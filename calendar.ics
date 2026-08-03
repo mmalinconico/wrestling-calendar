@@ -105,6 +105,15 @@ DESCRIPTION:Network: ESPN
 LOCATION:Smoothie King Center\, New Orleans\, Louisiana
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-aew-wrestledream-2026-10-17@mmalinconico.github.io
+DTSTAMP:20260803T205839Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:AEW WrestleDream
+DESCRIPTION:Network: PPV
+LOCATION:Addition Financial Arena\, Orlando\, Florida
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-aew-full-gear-2026-11-14@mmalinconico.github.io
 DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20261114
