@@ -21,6 +21,11 @@ AAA_INCLUDED_EVENT_NAMES = {
     "eternal glory",
 }
 
+WWE_AAA_EVENT_NAMES = {
+    "worlds collide",
+    "ola de calor",
+}
+
 CALENDAR_FIELDS = (
     "name",
     "date",
@@ -485,6 +490,21 @@ def assign_stable_metadata(events, previous_events):
                 matched = dated_candidates[0][1]
 
         if matched is None:
+            # Allow a one-time promotion reclassification without changing
+            # the calendar UID, as long as the event name and date uniquely
+            # identify the same previously stored event.
+            reclassified_candidates = available_candidates(
+                lambda previous: (
+                    normalize_text(previous.get("name", ""))
+                    == normalize_text(event.get("name", ""))
+                    and previous.get("date") == event.get("date")
+                )
+            )
+
+            if len(reclassified_candidates) == 1:
+                matched = reclassified_candidates[0]
+
+        if matched is None:
             same_date_candidates = available_candidates(
                 lambda previous: (
                     previous.get("promotion") == event.get("promotion")
@@ -608,7 +628,7 @@ def scrape_wwe(previous_events):
             else:
                 network = "ESPN"
 
-            if event_name == "Worlds Collide":
+            if normalize_text(event_name) in WWE_AAA_EVENT_NAMES:
                 promotion = "WWE/AAA"
                 network = "YouTube"
 
