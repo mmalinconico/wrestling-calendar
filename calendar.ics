@@ -50,6 +50,15 @@ DESCRIPTION:Network: The CW
 LOCATION:Bert Ogden Arena\, Edinburg\, Texas
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-wwe-ola-de-calor-2026-08-30@mmalinconico.github.io
+DTSTAMP:20260809T012132Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:WWE Ola de Calor
+DESCRIPTION:Network: ESPN
+LOCATION:Bert Ogden Arena\, Edinburg\, Texas
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-wwe-sunday-night-s-main-event-2026-09-06@mmalinconico.github.
  io
 DTSTAMP:20260731T221637Z
