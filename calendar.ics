@@ -5,15 +5,6 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:Wrestling Calendar
 BEGIN:VEVENT
-UID:wrestling-wwe-summerslam-night-2-2026-08-02@mmalinconico.github.io
-DTSTAMP:20260731T221637Z
-DTSTART;VALUE=DATE:20260802
-DTEND;VALUE=DATE:20260803
-SUMMARY:WWE SummerSlam Night 2
-DESCRIPTION:Network: ESPN
-LOCATION:U.S. Bank Stadium\, Minneapolis\, Minnesota
-END:VEVENT
-BEGIN:VEVENT
 UID:wrestling-roh-death-before-dishonor-2026-08-21@mmalinconico.github.io
 DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20260821
