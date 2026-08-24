@@ -23,12 +23,12 @@ DESCRIPTION:Network: PPV
 LOCATION:Wembley Stadium\, London\, England
 END:VEVENT
 BEGIN:VEVENT
-UID:wrestling-nxt-heatwave-2026-08-30@mmalinconico.github.io
-DTSTAMP:20260731T221637Z
+UID:wrestling-wwe-heatwave-2026-08-30@mmalinconico.github.io
+DTSTAMP:20260824T202500Z
 DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
-SUMMARY:NXT Heatwave
-DESCRIPTION:Network: The CW
+SUMMARY:WWE Heatwave
+DESCRIPTION:Network: ESPN
 LOCATION:Bert Ogden Arena\, Edinburg\, Texas
 END:VEVENT
 BEGIN:VEVENT

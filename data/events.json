@@ -20,14 +20,14 @@
     "dtstamp": "20260731T221637Z"
   },
   {
-    "name": "NXT Heatwave",
+    "name": "Heatwave",
     "date": "2026-08-30",
     "venue": "Bert Ogden Arena",
     "city": "Edinburg, Texas",
-    "network": "The CW",
-    "promotion": "NXT",
-    "uid": "wrestling-nxt-heatwave-2026-08-30@mmalinconico.github.io",
-    "dtstamp": "20260731T221637Z"
+    "network": "ESPN",
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-heatwave-2026-08-30@mmalinconico.github.io",
+    "dtstamp": "20260824T202500Z"
   },
   {
     "name": "Ola de Calor",
