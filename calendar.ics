@@ -123,4 +123,13 @@ SUMMARY:WWE Survivor Series: WarGames
 DESCRIPTION:Network: ESPN
 LOCATION:Daikin Park\, Houston\, Texas
 END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-wwe-wrestlepalooza-2026-12-12@mmalinconico.github.io
+DTSTAMP:20260828T040003Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:WWE Wrestlepalooza
+DESCRIPTION:Network: ESPN
+LOCATION:RAC Arena\, Perth\, Western Australia\, Australia
+END:VEVENT
 END:VCALENDAR

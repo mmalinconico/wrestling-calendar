@@ -128,5 +128,15 @@
     "promotion": "WWE",
     "uid": "wrestling-wwe-survivor-series-wargames-2026-11-28@mmalinconico.github.io",
     "dtstamp": "20260731T221637Z"
+  },
+  {
+    "name": "Wrestlepalooza",
+    "date": "2026-12-12",
+    "venue": "RAC Arena",
+    "city": "Perth, Western Australia, Australia",
+    "network": "ESPN",
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-wrestlepalooza-2026-12-12@mmalinconico.github.io",
+    "dtstamp": "20260828T040003Z"
   }
 ]
