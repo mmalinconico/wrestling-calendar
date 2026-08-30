@@ -100,6 +100,16 @@
     "dtstamp": "20260803T205839Z"
   },
   {
+    "name": "Halloween Havoc",
+    "date": "2026-10-31",
+    "venue": "TBA",
+    "city": "TBA",
+    "network": "ESPN",
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-halloween-havoc-2026-10-31@mmalinconico.github.io",
+    "dtstamp": "20260830T222102Z"
+  },
+  {
     "name": "Full Gear",
     "date": "2026-11-14",
     "city": "Phoenix, Arizona",
@@ -128,5 +138,15 @@
     "promotion": "WWE",
     "uid": "wrestling-wwe-wrestlepalooza-2026-12-12@mmalinconico.github.io",
     "dtstamp": "20260828T040003Z"
+  },
+  {
+    "name": "AEW Dynasty",
+    "date": "2027-02-07",
+    "city": "Liverpool, England",
+    "venue": "Liverpool Arena",
+    "network": "PPV",
+    "promotion": "AEW",
+    "uid": "wrestling-aew-dynasty-2027-02-07@mmalinconico.github.io",
+    "dtstamp": "20260830T222102Z"
   }
 ]
