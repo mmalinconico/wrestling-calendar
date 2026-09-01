@@ -106,12 +106,13 @@ LOCATION:TBA\, TBA
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-wwe-crown-jewel-2026-11-07@mmalinconico.github.io
-DTSTAMP:20260901T090733Z
+DTSTAMP:20260901T155955Z
 DTSTART;VALUE=DATE:20261107
 DTEND;VALUE=DATE:20261108
 SUMMARY:WWE Crown Jewel
 DESCRIPTION:Network: ESPN
-LOCATION:TBA\, Riyadh\, Saudi Arabia
+LOCATION:Riyadh Season Stadium at King Abdullah Financial District\, Riyadh
+ \, Saudi Arabia
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-aew-full-gear-2026-11-14@mmalinconico.github.io
