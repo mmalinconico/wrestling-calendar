@@ -359,6 +359,172 @@ def row_background_color(row_tag):
     return ""
 
 
+def fetch_wikitext(page_title):
+    response = requests.get(
+        "https://en.wikipedia.org/w/api.php",
+        params={
+            "action": "query",
+            "prop": "revisions",
+            "rvprop": "content",
+            "rvslots": "main",
+            "format": "json",
+            "formatversion": "2",
+            "titles": page_title,
+        },
+        headers=HEADERS,
+        timeout=30,
+    )
+    response.raise_for_status()
+    data = response.json()
+
+    try:
+        pages = data["query"]["pages"]
+        page = pages[0]
+        revision = page["revisions"][0]
+        main_slot = revision["slots"]["main"]
+        content = (
+            main_slot.get("content")
+            or main_slot.get("*")
+        )
+    except (KeyError, IndexError, TypeError):
+        content = None
+
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError(
+            f"Could not retrieve raw wikitext for {page_title}."
+        )
+
+    return content
+
+
+def wikitext_cell_text(line):
+    value = str(line).lstrip("|").strip()
+
+    # Remove common table-cell attributes before the actual cell value.
+    attribute_pattern = re.compile(
+        r"^(?:(?:rowspan|colspan|style|class|scope|align|bgcolor)"
+        r"\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^|]+)\s*)+\|\s*(.*)$",
+        re.I,
+    )
+    match = attribute_pattern.match(value)
+
+    if match:
+        value = match.group(1).strip()
+
+    value = re.sub(
+        r"<ref\b[^>]*>.*?</ref>",
+        "",
+        value,
+        flags=re.I | re.S,
+    )
+    value = re.sub(
+        r"<ref\b[^>]*/\s*>",
+        "",
+        value,
+        flags=re.I,
+    )
+
+    # Convert wiki links to their displayed text.
+    value = re.sub(
+        r"\[\[([^\[\]|]+)\|([^\[\]]+)\]\]",
+        r"\2",
+        value,
+    )
+    value = re.sub(
+        r"\[\[([^\[\]]+)\]\]",
+        r"\1",
+        value,
+    )
+
+    # Remove simple formatting/templates that are not part of event names.
+    previous = None
+
+    while previous != value:
+        previous = value
+        value = re.sub(r"\{\{[^{}]*\}\}", "", value)
+
+    value = re.sub(r"<[^>]+>", "", value)
+    value = value.replace("''", "")
+
+    return clean_text(value)
+
+
+def wwe_upcoming_color_names():
+    """Read WWE/AAA/NXT row colors from Wikipedia's raw wikitext."""
+    page_title = "List of WWE pay-per-view and livestreaming supercards"
+    source = fetch_wikitext(page_title)
+
+    start_marker = "==Upcoming event schedule=="
+    end_marker = "==Number of events by year=="
+
+    if start_marker not in source or end_marker not in source:
+        raise RuntimeError(
+            "WWE/NXT: raw upcoming schedule section not found."
+        )
+
+    upcoming = source.split(start_marker, 1)[1].split(
+        end_marker,
+        1,
+    )[0]
+
+    # re.split keeps the row marker text in alternating entries.
+    parts = re.split(
+        r"(?m)^\|-([^\n]*)\n",
+        upcoming,
+    )
+
+    green_names = set()
+    yellow_names = set()
+
+    for index in range(1, len(parts), 2):
+        marker = parts[index].lower()
+        body = parts[index + 1]
+
+        if "b9e2c9" in marker:
+            target = green_names
+        elif "ffff80" in marker:
+            target = yellow_names
+        else:
+            continue
+
+        cell_lines = [
+            line
+            for line in body.splitlines()
+            if line.startswith("|")
+            and not line.startswith("|-")
+            and not line.startswith("|}")
+            and not line.startswith("{|")
+        ]
+
+        # Event-table rows have Date as the first cell and Event as the
+        # second. Legend rows do not have a date and are ignored.
+        if len(cell_lines) < 2:
+            continue
+
+        date_candidate = wikitext_cell_text(cell_lines[0])
+
+        if parse_complete_date(date_candidate) is None:
+            continue
+
+        event_name = wikitext_cell_text(cell_lines[1])
+
+        if event_name:
+            target.add(normalize_text(event_name))
+
+    if not green_names and not yellow_names:
+        raise RuntimeError(
+            "WWE/NXT: raw source contained no classified upcoming events."
+        )
+
+    print(
+        "WWE raw classification: "
+        f"{len(green_names)} WWE/AAA, "
+        f"{len(yellow_names)} NXT event names"
+    )
+
+    return green_names, yellow_names
+
+
 def require_columns(source_name, table, required):
     rows = expand_table_rows(table)
 
@@ -612,6 +778,7 @@ def scrape_wwe(previous_events):
         "List_of_WWE_pay-per-view_and_livestreaming_supercards"
     )
     soup = fetch_soup(url)
+    green_names, yellow_names = wwe_upcoming_color_names()
     heading = find_heading(soup, "Upcoming event schedule")
     tables = find_tables_in_section(
         heading,
@@ -669,11 +836,15 @@ def scrape_wwe(previous_events):
             # its row styling.
             normalized_event_name = normalize_text(event_name)
 
-            if background_color == "#b9e2c9":
+            if (
+                normalized_event_name in green_names
+                or background_color == "#b9e2c9"
+            ):
                 promotion = "WWE/AAA"
                 network = "YouTube"
             elif (
-                background_color == "#ffff80"
+                normalized_event_name in yellow_names
+                or background_color == "#ffff80"
                 or normalized_event_name.startswith("nxt")
                 or "great american bash" in normalized_event_name
             ):
