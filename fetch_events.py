@@ -449,8 +449,74 @@ def wikitext_cell_text(line):
     return clean_text(value)
 
 
-def wwe_upcoming_color_names():
-    """Read WWE/AAA/NXT row colors from Wikipedia's raw wikitext."""
+def parse_wikitext_cell(line):
+    """Return cleaned cell text plus an optional rowspan count."""
+    raw = str(line).strip()
+
+    if not raw.startswith("|"):
+        return "", 1
+
+    raw = raw[1:].strip()
+    rowspan = 1
+
+    rowspan_match = re.match(
+        r'rowspan\s*=\s*"?(\d+)"?\s*\|\s*(.*)$',
+        raw,
+        re.I,
+    )
+
+    if rowspan_match:
+        rowspan = int(rowspan_match.group(1))
+        raw = rowspan_match.group(2).strip()
+    else:
+        attribute_match = re.match(
+            r'(?:(?:style|class|scope|align|bgcolor|colspan)'
+            r'\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^|]+)\s*)+\|\s*(.*)$',
+            raw,
+            re.I,
+        )
+
+        if attribute_match:
+            raw = attribute_match.group(1).strip()
+
+    raw = re.sub(
+        r"<ref\b[^>]*>.*?</ref>",
+        "",
+        raw,
+        flags=re.I | re.S,
+    )
+    raw = re.sub(
+        r"<ref\b[^>]*/\s*>",
+        "",
+        raw,
+        flags=re.I,
+    )
+
+    raw = re.sub(
+        r"\[\[([^\[\]|]+)\|([^\[\]]+)\]\]",
+        r"\2",
+        raw,
+    )
+    raw = re.sub(
+        r"\[\[([^\[\]]+)\]\]",
+        r"\1",
+        raw,
+    )
+
+    previous = None
+
+    while previous != raw:
+        previous = raw
+        raw = re.sub(r"\{\{[^{}]*\}\}", "", raw)
+
+    raw = re.sub(r"<[^>]+>", "", raw)
+    raw = raw.replace("''", "")
+
+    return clean_text(raw), rowspan
+
+
+def wwe_upcoming_classifications():
+    """Map (normalized event name, YYYY-MM-DD) to WWE/NXT/WWE/AAA."""
     page_title = "List of WWE pay-per-view and livestreaming supercards"
     source = fetch_wikitext(page_title)
 
@@ -467,62 +533,115 @@ def wwe_upcoming_color_names():
         1,
     )[0]
 
-    # re.split keeps the row marker text in alternating entries.
-    parts = re.split(
-        r"(?m)^\|-([^\n]*)\n",
-        upcoming,
+    # Pull only the actual Upcoming_events_YYYY tables, not the color-key tables.
+    table_pattern = re.compile(
+        r'\{\|[^\n]*id="Upcoming_events_(20\d{2})"[^\n]*\n'
+        r'(.*?)\n\|\}',
+        re.S,
     )
 
-    green_names = set()
-    yellow_names = set()
+    classifications = {}
+    table_count = 0
 
-    for index in range(1, len(parts), 2):
-        marker = parts[index].lower()
-        body = parts[index + 1]
+    for match in table_pattern.finditer(upcoming):
+        year = int(match.group(1))
+        table_body = match.group(2)
+        table_count += 1
 
-        if "b9e2c9" in marker:
-            target = green_names
-        elif "ffff80" in marker:
-            target = yellow_names
-        else:
-            continue
-
-        cell_lines = [
-            line
-            for line in body.splitlines()
-            if line.startswith("|")
-            and not line.startswith("|-")
-            and not line.startswith("|}")
-            and not line.startswith("{|")
-        ]
-
-        # Event-table rows have Date as the first cell and Event as the
-        # second. Legend rows do not have a date and are ignored.
-        if len(cell_lines) < 2:
-            continue
-
-        date_candidate = wikitext_cell_text(cell_lines[0])
-
-        if parse_complete_date(date_candidate) is None:
-            continue
-
-        event_name = wikitext_cell_text(cell_lines[1])
-
-        if event_name:
-            target.add(normalize_text(event_name))
-
-    if not green_names and not yellow_names:
-        raise RuntimeError(
-            "WWE/NXT: raw source contained no classified upcoming events."
+        # Each data row starts with a "|-" marker. Keep the marker so its
+        # green/yellow classification travels with the row.
+        row_parts = re.split(
+            r"(?m)^\|-(.*?)\n",
+            table_body,
         )
+
+        carried_event_name = ""
+        carried_event_rows = 0
+
+        for index in range(1, len(row_parts), 2):
+            marker = row_parts[index].lower()
+            body = row_parts[index + 1]
+
+            # Header rows begin with ! cells and are ignored.
+            cell_lines = [
+                line
+                for line in body.splitlines()
+                if line.startswith("|")
+                and not line.startswith("|-")
+                and not line.startswith("|}")
+            ]
+
+            if not cell_lines:
+                continue
+
+            date_text, _ = parse_wikitext_cell(cell_lines[0])
+            event_date = parse_complete_date(
+                date_text,
+                year=year,
+            )
+
+            if event_date is None:
+                continue
+
+            if carried_event_rows > 0:
+                event_name = carried_event_name
+                carried_event_rows -= 1
+            else:
+                if len(cell_lines) < 2:
+                    continue
+
+                event_name, rowspan = parse_wikitext_cell(
+                    cell_lines[1]
+                )
+
+                if not event_name:
+                    continue
+
+                if rowspan > 1:
+                    carried_event_name = event_name
+                    carried_event_rows = rowspan - 1
+
+            if "b9e2c9" in marker:
+                promotion = "WWE/AAA"
+            elif "ffff80" in marker:
+                promotion = "NXT"
+            else:
+                promotion = "WWE"
+
+            classifications[
+                (
+                    normalize_text(event_name),
+                    event_date,
+                )
+            ] = promotion
+
+    if table_count == 0:
+        raise RuntimeError(
+            "WWE/NXT: raw upcoming event tables were not found."
+        )
+
+    if not classifications:
+        raise RuntimeError(
+            "WWE/NXT: raw upcoming event tables produced no dated events."
+        )
+
+    counts = {
+        "WWE": 0,
+        "NXT": 0,
+        "WWE/AAA": 0,
+    }
+
+    for promotion in classifications.values():
+        counts[promotion] = counts.get(promotion, 0) + 1
 
     print(
         "WWE raw classification: "
-        f"{len(green_names)} WWE/AAA, "
-        f"{len(yellow_names)} NXT event names"
+        f"{counts.get('WWE/AAA', 0)} WWE/AAA, "
+        f"{counts.get('NXT', 0)} NXT, "
+        f"{counts.get('WWE', 0)} WWE rows"
     )
 
-    return green_names, yellow_names
+    return classifications
 
 
 def require_columns(source_name, table, required):
@@ -778,7 +897,7 @@ def scrape_wwe(previous_events):
         "List_of_WWE_pay-per-view_and_livestreaming_supercards"
     )
     soup = fetch_soup(url)
-    green_names, yellow_names = wwe_upcoming_color_names()
+    raw_classifications = wwe_upcoming_classifications()
     heading = find_heading(soup, "Upcoming event schedule")
     tables = find_tables_in_section(
         heading,
@@ -836,14 +955,21 @@ def scrape_wwe(previous_events):
             # its row styling.
             normalized_event_name = normalize_text(event_name)
 
+            raw_promotion = raw_classifications.get(
+                (
+                    normalized_event_name,
+                    event_date,
+                )
+            )
+
             if (
-                normalized_event_name in green_names
+                raw_promotion == "WWE/AAA"
                 or background_color == "#b9e2c9"
             ):
                 promotion = "WWE/AAA"
                 network = "YouTube"
             elif (
-                normalized_event_name in yellow_names
+                raw_promotion == "NXT"
                 or background_color == "#ffff80"
                 or normalized_event_name.startswith("nxt")
                 or "great american bash" in normalized_event_name
