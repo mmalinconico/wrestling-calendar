@@ -304,9 +304,20 @@ def row_value(row, index):
 
 
 def row_background_color(row_tag):
-    """Return a normalized background color found on a row or its cells."""
+    """Return a normalized background color found anywhere in a table row."""
     if row_tag is None:
         return ""
+
+    # Wikipedia may move legacy bgcolor/style information around when
+    # converting wikitext to rendered HTML. Search the serialized row
+    # first so we do not depend on the color living on one exact element.
+    row_html = str(row_tag).lower()
+
+    if "b9e2c9" in row_html:
+        return "#b9e2c9"
+
+    if "ffff80" in row_html:
+        return "#ffff80"
 
     elements = [row_tag]
     elements.extend(
