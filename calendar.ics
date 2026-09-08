@@ -16,21 +16,21 @@ LOCATION:State Farm Arena\, Atlanta\, Georgia
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-aaa-triplemania-34-night-1-2026-09-11@mmalinconico.github.io
-DTSTAMP:20260731T221637Z
+DTSTAMP:20260908T185248Z
 DTSTART;VALUE=DATE:20260911
 DTEND;VALUE=DATE:20260912
-SUMMARY:AAA Triplemanía 34 Night 1
+SUMMARY:WWE/AAA Triplemanía 34 Night 1
 DESCRIPTION:Network: YouTube
-LOCATION:MGM Grand Garden Arena\, Paradise\, Nevada\, U.S.
+LOCATION:MGM Grand Garden Arena\, Paradise\, Nevada
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-aaa-triplemania-34-night-2-2026-09-13@mmalinconico.github.io
-DTSTAMP:20260731T221637Z
+DTSTAMP:20260908T185248Z
 DTSTART;VALUE=DATE:20260913
 DTEND;VALUE=DATE:20260914
-SUMMARY:AAA Triplemanía 34 Night 2
+SUMMARY:WWE/AAA Triplemanía 34 Night 2
 DESCRIPTION:Network: YouTube
-LOCATION:Arena CDMX\, Azcapotzalco\, Mexico City\, Mexico
+LOCATION:Arena CDMX\, Mexico City\, Mexico
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-aew-all-out-2026-09-26@mmalinconico.github.io
