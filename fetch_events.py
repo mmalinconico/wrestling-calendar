@@ -312,6 +312,37 @@ def row_value(row, index):
     return clean_text(row[index])
 
 
+def row_background_color(row_tag):
+    """Return a normalized row background color such as '#ffff80'."""
+    if row_tag is None:
+        return ""
+
+    bgcolor = clean_text(row_tag.get("bgcolor", "")).lower()
+
+    if bgcolor:
+        if not bgcolor.startswith("#") and re.fullmatch(
+            r"[0-9a-f]{6}",
+            bgcolor,
+        ):
+            bgcolor = f"#{bgcolor}"
+
+        return bgcolor
+
+    style = str(row_tag.get("style", ""))
+
+    match = re.search(
+        r"(?:background|background-color)\s*:\s*"
+        r"(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)",
+        style,
+        re.I,
+    )
+
+    if not match:
+        return ""
+
+    return match.group(1).lower()
+
+
 def require_columns(source_name, table, required):
     rows = expand_table_rows(table)
 
@@ -592,13 +623,20 @@ def scrape_wwe(previous_events):
                 "city": ("location", "city"),
             },
         )
+        expanded_rows = expand_table_rows(table)
         notes_index = find_column_index(
-            expand_table_rows(table)[0],
+            expanded_rows[0],
             "notes",
         )
+        raw_rows = table.find_all("tr")[1:]
         table_events = []
 
-        for row in rows:
+        if len(raw_rows) != len(rows):
+            raise RuntimeError(
+                "WWE/NXT: expanded row count does not match raw row count."
+            )
+
+        for row, raw_row in zip(rows, raw_rows):
             date_text = row_value(row, indexes["date"])
             event_name = row_value(row, indexes["event"])
             venue = row_value(row, indexes["venue"])
@@ -614,10 +652,17 @@ def scrape_wwe(previous_events):
             if event_date is None:
                 continue
 
+            background_color = row_background_color(raw_row)
+
+            # Wikipedia's schedule legend marks NXT-branded events
+            # with a yellow (#FFFF80) row. Prefer that explicit source
+            # metadata, with the existing name checks retained as a
+            # fallback in case Wikipedia changes its markup.
             promotion = (
                 "NXT"
-                if event_name.startswith("NXT")
-                or "Great American Bash" in event_name
+                if background_color == "#ffff80"
+                or normalize_text(event_name).startswith("nxt")
+                or "great american bash" in normalize_text(event_name)
                 else "WWE"
             )
 
