@@ -304,34 +304,48 @@ def row_value(row, index):
 
 
 def row_background_color(row_tag):
-    """Return a normalized row background color such as '#ffff80'."""
+    """Return a normalized background color found on a row or its cells."""
     if row_tag is None:
         return ""
 
-    bgcolor = clean_text(row_tag.get("bgcolor", "")).lower()
-
-    if bgcolor:
-        if not bgcolor.startswith("#") and re.fullmatch(
-            r"[0-9a-f]{6}",
-            bgcolor,
-        ):
-            bgcolor = f"#{bgcolor}"
-
-        return bgcolor
-
-    style = str(row_tag.get("style", ""))
-
-    match = re.search(
-        r"(?:background|background-color)\s*:\s*"
-        r"(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)",
-        style,
-        re.I,
+    elements = [row_tag]
+    elements.extend(
+        row_tag.find_all(
+            ["th", "td"],
+            recursive=False,
+        )
     )
 
-    if not match:
-        return ""
+    for element in elements:
+        bgcolor = clean_text(
+            element.get("bgcolor", "")
+        ).lower()
 
-    return match.group(1).lower()
+        if bgcolor:
+            if (
+                not bgcolor.startswith("#")
+                and re.fullmatch(
+                    r"[0-9a-f]{6}",
+                    bgcolor,
+                )
+            ):
+                bgcolor = f"#{bgcolor}"
+
+            return bgcolor
+
+        style = str(element.get("style", ""))
+
+        match = re.search(
+            r"(?:background|background-color)\s*:\s*"
+            r"(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)",
+            style,
+            re.I,
+        )
+
+        if match:
+            return match.group(1).lower()
+
+    return ""
 
 
 def require_columns(source_name, table, required):
