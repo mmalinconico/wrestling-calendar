@@ -17,15 +17,6 @@ PAST_EVENT_RETENTION_DAYS = 7
 MAX_RESCHEDULE_MATCH_DAYS = 180
 CALENDAR_TIMEZONE = ZoneInfo("America/New_York")
 
-AAA_INCLUDED_EVENT_NAMES = {
-    "eternal glory",
-}
-
-WWE_AAA_EVENT_NAMES = {
-    "worlds collide",
-    "ola de calor",
-}
-
 CALENDAR_FIELDS = (
     "name",
     "date",
@@ -431,15 +422,6 @@ def expand_table_rows(table):
     return expanded_rows
 
 
-def is_included_aaa_event(event_name):
-    normalized_name = normalize_text(event_name)
-
-    return (
-        normalized_name.startswith("triplemania")
-        or normalized_name in AAA_INCLUDED_EVENT_NAMES
-    )
-
-
 def legacy_uid_for_event(event):
     promotion = slugify(event.get("promotion", "wrestling"))
     name = slugify(event.get("name", "event"))
@@ -654,28 +636,31 @@ def scrape_wwe(previous_events):
 
             background_color = row_background_color(raw_row)
 
-            # Wikipedia's schedule legend marks NXT-branded events
-            # with a yellow (#FFFF80) row. Prefer that explicit source
-            # metadata, with the existing name checks retained as a
-            # fallback in case Wikipedia changes its markup.
-            promotion = (
-                "NXT"
-                if background_color == "#ffff80"
-                or normalize_text(event_name).startswith("nxt")
-                or "great american bash" in normalize_text(event_name)
-                else "WWE"
-            )
+            # Wikipedia's schedule legend marks:
+            #   yellow (#FFFF80) = NXT-branded
+            #   green  (#B9E2C9) = co-produced with AAA
+            # Prefer that explicit source metadata. Keep the existing
+            # NXT name checks only as a fallback if Wikipedia changes
+            # its row styling.
+            normalized_event_name = normalize_text(event_name)
 
-            if promotion == "NXT":
-                network = "The CW"
-            elif "Main Event" in event_name:
-                network = "Peacock"
-            else:
-                network = "ESPN"
-
-            if normalize_text(event_name) in WWE_AAA_EVENT_NAMES:
+            if background_color == "#b9e2c9":
                 promotion = "WWE/AAA"
                 network = "YouTube"
+            elif (
+                background_color == "#ffff80"
+                or normalized_event_name.startswith("nxt")
+                or "great american bash" in normalized_event_name
+            ):
+                promotion = "NXT"
+                network = "The CW"
+            else:
+                promotion = "WWE"
+
+                if "main event" in normalized_event_name:
+                    network = "Peacock"
+                else:
+                    network = "ESPN"
 
             table_events.append({
                 "name": event_name,
@@ -785,19 +770,29 @@ def scrape_aaa(previous_events):
                 city = cells[2]
                 venue = cells[3]
 
-                if not is_included_aaa_event(event_name):
+                event_date = parse_complete_date(
+                    date_text,
+                    year=year,
+                )
+
+                # Never guess incomplete dates.
+                if event_date is None:
                     continue
 
-                month_day = extract_month_day(date_text)
+                parsed_date = datetime.strptime(
+                    event_date,
+                    "%Y-%m-%d",
+                ).date()
 
-                # Eternal Glory remains excluded until a complete
-                # month-and-day date is listed.
-                if not month_day:
+                # AAA's Saturday slot is treated as weekly television,
+                # even when an episode carries a special event name.
+                # Standalone AAA events on every other day are included.
+                if parsed_date.weekday() == 5:
                     continue
 
                 parsed_rows.append({
                     "name": event_name,
-                    "date": parse_date(month_day, year=year),
+                    "date": event_date,
                     "venue": venue or "TBA",
                     "city": city or "TBA",
                     "network": "YouTube",
@@ -992,6 +987,38 @@ def retain_recent_past_events(events, previous_events):
     return retained_count
 
 
+def suppress_aaa_duplicates(events):
+    """Prefer WWE/AAA when the same named event/date also comes from AAA."""
+    wwe_aaa_keys = {
+        (
+            normalize_text(event.get("name", "")),
+            event.get("date", ""),
+        )
+        for event in events
+        if event.get("promotion") == "WWE/AAA"
+    }
+
+    filtered_events = []
+    suppressed_count = 0
+
+    for event in events:
+        duplicate_key = (
+            normalize_text(event.get("name", "")),
+            event.get("date", ""),
+        )
+
+        if (
+            event.get("promotion") == "AAA"
+            and duplicate_key in wwe_aaa_keys
+        ):
+            suppressed_count += 1
+            continue
+
+        filtered_events.append(event)
+
+    return filtered_events, suppressed_count
+
+
 def deduplicate_events(events):
     unique_events = []
     seen_keys = set()
@@ -1033,6 +1060,7 @@ def main():
     events.extend(scrape_aew(previous_events))
     events.extend(scrape_roh(previous_events))
 
+    events, suppressed_aaa_count = suppress_aaa_duplicates(events)
     events = deduplicate_events(events)
     events, removed_stale_count = filter_events_by_retention(events)
     retained_count = retain_recent_past_events(
@@ -1052,6 +1080,10 @@ def main():
 
     write_events_atomically(events)
 
+    print(
+        f"Suppressed {suppressed_aaa_count} AAA duplicates "
+        "already supplied by WWE/AAA"
+    )
     print(f"Filtered {removed_stale_count} stale scraped events")
     print(f"Retained {retained_count} recent past events")
     print(f"Generated {len(events)} events")
