@@ -997,12 +997,23 @@ def scrape_wwe(previous_events):
         grouped_events = {}
 
         for event in table_events:
-            group_key = (
-                event["promotion"],
-                normalize_text(event["name"]),
-                normalize_text(event["venue"]),
-                normalize_text(event["city"]),
-            )
+            if event["two_part"]:
+                # Two-part events can take place in different venues/cities.
+                # Group them by promotion + event name so both dated rows
+                # are kept together and can become Night 1 / Night 2.
+                group_key = (
+                    event["promotion"],
+                    normalize_text(event["name"]),
+                    "two-part-event",
+                )
+            else:
+                group_key = (
+                    event["promotion"],
+                    normalize_text(event["name"]),
+                    normalize_text(event["venue"]),
+                    normalize_text(event["city"]),
+                )
+
             grouped_events.setdefault(group_key, []).append(event)
 
         for group in grouped_events.values():
