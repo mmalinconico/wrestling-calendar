@@ -14,15 +14,6 @@ DESCRIPTION:Network: PPV
 LOCATION:Now Arena\, Chicago\, Illinois
 END:VEVENT
 BEGIN:VEVENT
-UID:wrestling-wwe-aaa-worlds-collide-2026-09-26@mmalinconico.github.io
-DTSTAMP:20260731T221637Z
-DTSTART;VALUE=DATE:20260926
-DTEND;VALUE=DATE:20260927
-SUMMARY:WWE/AAA Worlds Collide
-DESCRIPTION:Network: YouTube
-LOCATION:Allstate Arena\, Rosemont\, Illinois
-END:VEVENT
-BEGIN:VEVENT
 UID:wrestling-wwe-money-in-the-bank-2026-10-10@mmalinconico.github.io
 DTSTAMP:20260731T221637Z
 DTSTART;VALUE=DATE:20261010
