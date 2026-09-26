@@ -136,6 +136,46 @@ def parse_complete_date(date_text, year=None):
         return None
 
 
+def parse_air_date_override(date_text, year=None):
+    """
+    Return an explicit air date when the source date cell says an event
+    "will air" on a different date. Otherwise return None.
+
+    Example:
+        "September 26 (will air September 30)" -> 2026-09-30
+
+    The physical event date remains available separately for source
+    classification; this function controls only the date emitted to the
+    viewer-facing calendar.
+    """
+    cleaned = clean_text(date_text)
+
+    match = re.search(
+        r"\bwill\s+air\s+"
+        r"((?:January|February|March|April|May|June|July|August|"
+        r"September|October|November|December)\s+\d{1,2}"
+        r"(?:,?\s+\d{4})?)\b",
+        cleaned,
+        re.I,
+    )
+
+    if not match:
+        return None
+
+    air_text = clean_text(match.group(1))
+
+    try:
+        if re.search(r"\b\d{4}\b", air_text):
+            return parse_date(air_text)
+
+        if year is not None:
+            return parse_date(air_text, year=year)
+
+        return parse_date(air_text)
+    except ValueError:
+        return None
+
+
 def event_key(event):
     return (
         event.get("promotion", ""),
@@ -939,11 +979,20 @@ def scrape_wwe(previous_events):
             if not event_name:
                 continue
 
-            event_date = parse_complete_date(date_text, year=year)
+            source_event_date = parse_complete_date(date_text, year=year)
 
             # Skip TBA, month-only, date-range, and malformed rows.
-            if event_date is None:
+            if source_event_date is None:
                 continue
+
+            # This calendar is viewer-facing: when Wikipedia explicitly says
+            # an event "will air" on a different date, use that air date in
+            # the calendar. Keep source_event_date for raw row/color lookup,
+            # because Wikipedia classifies the physical event row by that date.
+            event_date = (
+                parse_air_date_override(date_text, year=year)
+                or source_event_date
+            )
 
             background_color = row_background_color(raw_row)
 
@@ -958,7 +1007,7 @@ def scrape_wwe(previous_events):
             raw_promotion = raw_classifications.get(
                 (
                     normalized_event_name,
-                    event_date,
+                    source_event_date,
                 )
             )
 
@@ -983,6 +1032,12 @@ def scrape_wwe(previous_events):
                     network = "Peacock"
                 else:
                     network = "ESPN"
+
+            if event_date != source_event_date:
+                print(
+                    "WWE air-date override: "
+                    f"{event_name}: {source_event_date} -> {event_date}"
+                )
 
             table_events.append({
                 "name": event_name,
