@@ -1046,6 +1046,11 @@ def scrape_wwe(previous_events):
                 "city": city,
                 "network": network,
                 "promotion": promotion,
+                # Keep the physical/source date internally when an explicit
+                # air-date override moves the viewer-facing calendar date.
+                # This lets duplicate suppression and recent-past retention
+                # recognize that both dates describe the same event.
+                "_source_date": source_event_date,
                 "two_part": "two-part event" in normalize_text(notes),
             })
 
@@ -1354,12 +1359,36 @@ def retain_recent_past_events(events, previous_events):
         days=PAST_EVENT_RETENTION_DAYS
     )
     current_keys = {event_key(event) for event in events}
+
+    # If a currently scraped WWE event has been moved from its physical date
+    # to an explicit air date, do not also retain the previous physical-date
+    # copy as recent history. It is the same event, not a second event.
+    superseded_source_keys = {
+        (
+            event.get("promotion", ""),
+            normalize_text(event.get("name", "")),
+            event.get("_source_date", ""),
+        )
+        for event in events
+        if event.get("_source_date")
+        and event.get("_source_date") != event.get("date")
+    }
+
     retained_count = 0
 
     for previous_event in previous_events:
         key = event_key(previous_event)
 
         if key in current_keys:
+            continue
+
+        previous_source_key = (
+            previous_event.get("promotion", ""),
+            normalize_text(previous_event.get("name", "")),
+            previous_event.get("date", ""),
+        )
+
+        if previous_source_key in superseded_source_keys:
             continue
 
         previous_date = parse_stored_date(previous_event)
@@ -1376,11 +1405,11 @@ def retain_recent_past_events(events, previous_events):
 
 
 def suppress_aaa_duplicates(events):
-    """Prefer WWE/AAA when the same named event/date also comes from AAA."""
+    """Prefer WWE/AAA when the same named physical event also comes from AAA."""
     wwe_aaa_keys = {
         (
             normalize_text(event.get("name", "")),
-            event.get("date", ""),
+            event.get("_source_date") or event.get("date", ""),
         )
         for event in events
         if event.get("promotion") == "WWE/AAA"
@@ -1457,6 +1486,11 @@ def main():
     )
     events = deduplicate_events(events)
     assign_stable_metadata(events, previous_events)
+
+    # Internal source metadata is needed only while reconciling this scrape.
+    # Do not persist it in data/events.json.
+    for event in events:
+        event.pop("_source_date", None)
 
     events.sort(
         key=lambda event: (
