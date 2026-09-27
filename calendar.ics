@@ -79,6 +79,15 @@ DESCRIPTION:Network: ESPN
 LOCATION:RAC Arena\, Perth\, Western Australia\, Australia
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-aew-worlds-end-2026-12-19@mmalinconico.github.io
+DTSTAMP:20260927T161920Z
+DTSTART;VALUE=DATE:20261219
+DTEND;VALUE=DATE:20261220
+SUMMARY:AEW Worlds End
+DESCRIPTION:Network: PPV
+LOCATION:Target Center\, Minneapolis\, Minnesota
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-aew-dynasty-2027-02-07@mmalinconico.github.io
 DTSTAMP:20260831T184141Z
 DTSTART;VALUE=DATE:20270207
