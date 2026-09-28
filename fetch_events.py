@@ -775,7 +775,12 @@ def expand_table_rows(table):
 def legacy_uid_for_event(event):
     promotion = slugify(event.get("promotion", "wrestling"))
     name = slugify(event.get("name", "event"))
-    event_date = slugify(event.get("date", "unknown-date"))
+    # For an explicitly delayed broadcast, anchor identity to the physical
+    # source date. That keeps the UID stable when the viewer-facing date moves
+    # to the later air date, including if Wikipedia has already moved the row
+    # from Upcoming to Past events.
+    identity_date = event.get("_source_date") or event.get("date", "unknown-date")
+    event_date = slugify(identity_date)
 
     if name == promotion or name.startswith(f"{promotion}-"):
         identity = name
@@ -1106,6 +1111,155 @@ def scrape_wwe(previous_events):
                     )
 
                 parsed_events.append(clean_event)
+
+    # Once a physically held event occurs, Wikipedia can move its row from
+    # Upcoming event schedule to Past events even when the broadcast is still
+    # in the future. Recover only rows that explicitly say "will air ..." and
+    # whose air date has not yet passed. This keeps the calendar viewer-facing
+    # without retaining unrelated events that were genuinely removed.
+    past_heading = find_heading(
+        soup,
+        "Past events",
+        levels=("h2",),
+    )
+    past_tables = find_tables_in_section(
+        past_heading,
+        required_words=("date", "event", "venue"),
+    )
+    today = calendar_today()
+    delayed_air_count = 0
+
+    for year, table in past_tables:
+        if year is None or year < today.year - 1:
+            continue
+
+        indexes, rows = require_columns(
+            "WWE/NXT past events",
+            table,
+            {
+                "date": ("date",),
+                "event": ("event",),
+                "venue": ("venue",),
+                "city": ("location", "city"),
+            },
+        )
+        expanded_rows = expand_table_rows(table)
+        notes_index = find_column_index(
+            expanded_rows[0],
+            "notes",
+        )
+        raw_rows = table.find_all("tr")[1:]
+
+        if len(raw_rows) != len(rows):
+            raise RuntimeError(
+                "WWE/NXT past events: expanded row count does not "
+                "match raw row count."
+            )
+
+        for row, raw_row in zip(rows, raw_rows):
+            date_text = row_value(row, indexes["date"])
+            event_name = row_value(row, indexes["event"])
+
+            if not event_name:
+                continue
+
+            source_event_date = parse_complete_date(
+                date_text,
+                year=year,
+            )
+            event_date = parse_air_date_override(
+                date_text,
+                year=year,
+            )
+
+            if source_event_date is None or event_date is None:
+                continue
+
+            parsed_air_date = datetime.strptime(
+                event_date,
+                "%Y-%m-%d",
+            ).date()
+
+            if parsed_air_date < today:
+                continue
+
+            normalized_event_name = normalize_text(event_name)
+            background_color = row_background_color(raw_row)
+            notes = row_value(row, notes_index)
+
+            # Prefer explicit rendered row color. If Wikipedia's rendered
+            # styling no longer carries the classification, reuse a matching
+            # previously stored event. As a final source-based fallback, a
+            # YouTube-exclusive delayed event is treated as WWE/AAA because
+            # those co-produced rows use YouTube in this schedule.
+            if background_color == "#b9e2c9":
+                promotion = "WWE/AAA"
+                network = "YouTube"
+            elif background_color == "#ffff80":
+                promotion = "NXT"
+                network = "The CW"
+            else:
+                previous_match = next(
+                    (
+                        previous
+                        for previous in previous_events
+                        if normalize_text(previous.get("name", ""))
+                        == normalized_event_name
+                        and (
+                            previous.get("date") == event_date
+                            or previous.get("uid", "").endswith(
+                                f"-{source_event_date}@mmalinconico.github.io"
+                            )
+                        )
+                    ),
+                    None,
+                )
+
+                if previous_match is not None:
+                    promotion = previous_match.get("promotion", "WWE")
+                    network = previous_match.get("network", "ESPN")
+                elif "youtube" in normalize_text(notes):
+                    promotion = "WWE/AAA"
+                    network = "YouTube"
+                elif (
+                    normalized_event_name.startswith("nxt")
+                    or "great american bash" in normalized_event_name
+                ):
+                    promotion = "NXT"
+                    network = "The CW"
+                else:
+                    promotion = "WWE"
+                    network = (
+                        "Peacock"
+                        if "main event" in normalized_event_name
+                        else "ESPN"
+                    )
+
+            delayed_event = {
+                "name": event_name,
+                "date": event_date,
+                "venue": row_value(row, indexes["venue"]),
+                "city": row_value(row, indexes["city"]),
+                "network": network,
+                "promotion": promotion,
+                "_source_date": source_event_date,
+            }
+
+            if event_key(delayed_event) not in {
+                event_key(event) for event in parsed_events
+            }:
+                parsed_events.append(delayed_event)
+                delayed_air_count += 1
+                print(
+                    "WWE delayed-air recovery: "
+                    f"{event_name}: {source_event_date} -> {event_date}"
+                )
+
+    if delayed_air_count:
+        print(
+            f"Recovered {delayed_air_count} WWE event(s) from Past events "
+            "with a future explicit air date"
+        )
 
     validate_source(
         "WWE/NXT",
