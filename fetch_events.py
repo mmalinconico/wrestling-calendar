@@ -1606,19 +1606,66 @@ def deduplicate_events(events):
     return unique_events
 
 
-def write_events_atomically(events):
-    EVENTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    temporary_file = EVENTS_FILE.with_suffix(".json.tmp")
 
-    with temporary_file.open("w", encoding="utf-8") as file:
-        json.dump(
-            events,
-            file,
-            indent=2,
-            ensure_ascii=False,
+def guard_upcoming_event_losses(events, previous_events):
+    """Fail closed if a previously published future event vanishes.
+
+    A changed date or promotion does not count as a disappearance when the
+    normalized event name still matches within the rescheduling window.
+    This intentionally requires review for a genuine cancellation or rename;
+    it avoids silently removing subscriber events due to Wikipedia edits.
+    Events taking place today or earlier follow the existing retention rule.
+    """
+    today = calendar_today()
+    current = [
+        event for event in events
+        if (parse_stored_date(event) or date.min) >= today
+    ]
+    missing = []
+
+    for previous in previous_events:
+        previous_date = parse_stored_date(previous)
+        if previous_date is None or previous_date <= today:
+            continue
+
+        previous_name = normalize_text(previous.get("name", ""))
+        matched = any(
+            normalize_text(event.get("name", "")) == previous_name
+            and abs((parse_stored_date(event) - previous_date).days)
+            <= MAX_RESCHEDULE_MATCH_DAYS
+            for event in current
         )
-        file.write("\n")
 
+        if not matched:
+            missing.append(previous)
+
+    if missing:
+        details = "; ".join(
+            f"{event.get('promotion', '?')} {event.get('name', '?')}"
+            f" ({event.get('date', '?')})"
+            for event in missing
+        )
+        raise RuntimeError(
+            "Unexpected loss of previously published future event(s): "
+            + details
+            + ". Calendar publication stopped. Check Wikipedia/source "
+              "changes and confirm cancellations or renames before "
+              "removing anything from data/events.json."
+        )
+
+
+def write_events_atomically(events):
+    """Write only when semantic content changes; preserve stable git output."""
+    content = json.dumps(events, indent=2, ensure_ascii=False) + "\n"
+    EVENTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    if EVENTS_FILE.exists() and EVENTS_FILE.read_text(
+        encoding="utf-8"
+    ) == content:
+        return
+
+    temporary_file = EVENTS_FILE.with_suffix(".json.tmp")
+    temporary_file.write_text(content, encoding="utf-8")
     temporary_file.replace(EVENTS_FILE)
 
 
@@ -1639,6 +1686,7 @@ def main():
         previous_events,
     )
     events = deduplicate_events(events)
+    guard_upcoming_event_losses(events, previous_events)
     assign_stable_metadata(events, previous_events)
 
     # Internal source metadata is needed only while reconciling this scrape.
