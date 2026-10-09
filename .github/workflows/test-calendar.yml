@@ -1,0 +1,34 @@
+name: Test Wrestling Calendar
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-wrestling-calendar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout proposed changes
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate Python syntax
+        run: python -m py_compile fetch_events.py generate_calendar.py validate_calendar.py tests/test_wrestling_calendar.py
+
+      - name: Run offline regression tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate committed ICS
+        run: python validate_calendar.py
