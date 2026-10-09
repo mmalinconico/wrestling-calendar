@@ -427,7 +427,7 @@ class CalendarFormatRules(unittest.TestCase):
     def test_rejects_bad_line_endings(self):
         items = self.sample_events()
         feed = self.render(items)
-        with self.assertRaisesRegex(ValueError, "LF"):
+        with self.assertRaisesRegex(ValueError, "CRLF|LF"):
             validate_calendar(feed.replace(b"\r\n", b"\n"), items)
 
     def test_rejects_duplicate_uids_in_json(self):
