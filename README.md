@@ -33,6 +33,28 @@ https://mmalinconico.github.io/wrestling-calendar/calendar.ics
 - Generates a standards-compliant iCalendar (`.ics`) subscription.
 - Hosted with GitHub Pages.
 
+## Regression Tests and Publication Safeguards
+
+- **Test Wrestling Calendar** runs offline regression tests and validates the
+  checked-in ICS when a pull request to `main` is opened or updated.
+- Production runs the same regression suite before fetching Wikipedia data and
+  validates the newly generated ICS **before** committing or publishing.
+- Tests cover WWE/NXT/AAA/AEW/ROH filtering, incomplete dates, delayed airing,
+  promotion classifications, stable UIDs, seven-day retention, duplicate
+  prevention, network/venue metadata, and RFC 5545 all-day formatting.
+- If a previously published *future* event unexpectedly disappears, the
+  production update **fails closed**. The existing subscription remains
+  unchanged until a source-data correction or confirmed cancellation is
+  reviewed. Date moves and normal retention still work.
+- Unchanged JSON and ICS output is not rewritten, and the production workflow
+  commits only if there is a real content change. This avoids unnecessary
+  GitHub Pages deployments.
+- No tests make live network requests. The production fetch cadence stays
+  every four hours.
+
+To test locally: `python -m unittest discover -s tests -v` followed by
+`python validate_calendar.py` (the latter checks the tracked ICS/JSON files).
+
 ## Supported Calendar Apps
 
 - Apple Calendar
