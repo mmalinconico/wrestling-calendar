@@ -127,10 +127,11 @@ def write_calendar_atomically(lines):
         for line in lines
     ) + "\r\n"
 
-    temporary_file.write_bytes(
-        content.encode("utf-8")
-    )
+    output_bytes = content.encode("utf-8")
+    if CALENDAR_FILE.exists() and CALENDAR_FILE.read_bytes() == output_bytes:
+        return
 
+    temporary_file.write_bytes(output_bytes)
     temporary_file.replace(CALENDAR_FILE)
 
 
