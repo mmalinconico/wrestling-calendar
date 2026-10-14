@@ -61,6 +61,15 @@ DESCRIPTION:Network: ESPN
 LOCATION:Daikin Park\, Houston\, Texas
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-roh-final-battle-2026-12-04@mmalinconico.github.io
+DTSTAMP:20261014T091453Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261205
+SUMMARY:ROH Final Battle
+DESCRIPTION:Network: PPV
+LOCATION:Boeing Center at Tech Port\, San Antonio\, Texas
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-wwe-wrestlepalooza-2026-12-12@mmalinconico.github.io
 DTSTAMP:20260828T040003Z
 DTSTART;VALUE=DATE:20261212
