@@ -10,6 +10,8 @@ from datetime import date
 from pathlib import Path
 from unittest import mock
 
+import requests
+
 from bs4 import BeautifulSoup
 
 import fetch_events as f
@@ -43,6 +45,92 @@ def schedule(section, headers, rows):
         f"<html><title>Fixture</title><h2>{section}</h2>"
         f"<h3>2026</h3><table><tr>{head}</tr>{body}</table></html>"
     )
+
+
+
+class WikipediaRetryRules(unittest.TestCase):
+    @staticmethod
+    def response(status, body=""):
+        result = requests.Response()
+        result.status_code = status
+        result._content = body.encode("utf-8")
+        result.url = "https://en.wikipedia.org/wiki/Test"
+        return result
+
+    def test_html_recovers_from_503_and_429(self):
+        html = "<html><title>Fixture</title><table><tr><td>A</td></tr></table></html>"
+        for status in (429, 500, 503, 599):
+            with self.subTest(status=status):
+                responses = [
+                    self.response(status),
+                    self.response(200, html),
+                ]
+                with (
+                    mock.patch.object(f.requests, "get", side_effect=responses) as get,
+                    mock.patch.object(f.time, "sleep") as sleep,
+                ):
+                    parsed = f.fetch_soup("https://en.wikipedia.org/wiki/Test")
+                self.assertIsNotNone(parsed.find("table"))
+                self.assertEqual(get.call_count, 2)
+                sleep.assert_called_once_with(1)
+
+    def test_api_recovers_after_two_transient_failures(self):
+        wiki = "==Upcoming event schedule=="
+        payload = json.dumps({
+            "query": {"pages": [{
+                "revisions": [{"slots": {"main": {"content": wiki}}}]
+            }]}
+        })
+        responses = [
+            self.response(503),
+            self.response(429),
+            self.response(200, payload),
+        ]
+        with (
+            mock.patch.object(f.requests, "get", side_effect=responses) as get,
+            mock.patch.object(f.time, "sleep") as sleep,
+        ):
+            result = f.fetch_wikitext("Test")
+        self.assertEqual(result, wiki)
+        self.assertEqual(get.call_count, 3)
+        self.assertEqual([call.args[0] for call in get.call_args_list],
+                         ["https://en.wikipedia.org/w/api.php"] * 3)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list],
+                         [1, 2])
+
+    def test_persistent_503_fails_closed_after_three_attempts(self):
+        responses = [self.response(503) for _ in range(3)]
+        with (
+            mock.patch.object(f.requests, "get", side_effect=responses) as get,
+            mock.patch.object(f.time, "sleep") as sleep,
+        ):
+            with self.assertRaises(requests.HTTPError):
+                f.fetch_wikitext("Test")
+        self.assertEqual(get.call_count, 3)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list],
+                         [1, 2])
+
+    def test_non_transient_404_is_not_retried(self):
+        with (
+            mock.patch.object(f.requests, "get",
+                              return_value=self.response(404)) as get,
+            mock.patch.object(f.time, "sleep") as sleep,
+        ):
+            with self.assertRaises(requests.HTTPError):
+                f.fetch_soup("https://en.wikipedia.org/wiki/Missing")
+        get.assert_called_once()
+        sleep.assert_not_called()
+
+    def test_malformed_successful_page_is_not_retried(self):
+        with (
+            mock.patch.object(f.requests, "get",
+                              return_value=self.response(200, "<html><title>Bad</title></html>")) as get,
+            mock.patch.object(f.time, "sleep") as sleep,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "Unexpected page structure"):
+                f.fetch_soup("https://en.wikipedia.org/wiki/Test")
+        get.assert_called_once()
+        sleep.assert_not_called()
 
 
 class DateAndSourceRules(unittest.TestCase):
