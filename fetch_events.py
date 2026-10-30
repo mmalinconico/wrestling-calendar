@@ -1,5 +1,6 @@
 import json
 import re
+import time
 import unicodedata
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -208,13 +209,28 @@ def load_previous_events():
     return []
 
 
+def fetch_wikipedia_response(url, **kwargs):
+    """Retry only temporary Wikipedia HTTP failures; never publish bad data."""
+    for attempt in range(3):
+        response = requests.get(
+            url,
+            headers=HEADERS,
+            timeout=30,
+            **kwargs,
+        )
+        status = response.status_code
+        if (status == 429 or 500 <= status < 600) and attempt < 2:
+            delay = 2 ** attempt
+            print(f"Wikipedia HTTP {status}; retrying in {delay}s")
+            time.sleep(delay)
+            continue
+
+        response.raise_for_status()
+        return response
+
+
 def fetch_soup(url):
-    response = requests.get(
-        url,
-        headers=HEADERS,
-        timeout=30,
-    )
-    response.raise_for_status()
+    response = fetch_wikipedia_response(url)
 
     soup = BeautifulSoup(response.text, "html.parser")
 
@@ -400,7 +416,7 @@ def row_background_color(row_tag):
 
 
 def fetch_wikitext(page_title):
-    response = requests.get(
+    response = fetch_wikipedia_response(
         "https://en.wikipedia.org/w/api.php",
         params={
             "action": "query",
@@ -411,10 +427,7 @@ def fetch_wikitext(page_title):
             "formatversion": "2",
             "titles": page_title,
         },
-        headers=HEADERS,
-        timeout=30,
     )
-    response.raise_for_status()
     data = response.json()
 
     try:
