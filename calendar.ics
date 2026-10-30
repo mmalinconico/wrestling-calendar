@@ -15,12 +15,12 @@ LOCATION:WWE Performance Center\, Orlando\, Florida
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-wwe-crown-jewel-2026-11-07@mmalinconico.github.io
-DTSTAMP:20261028T235131Z
+DTSTAMP:20261030T144709Z
 DTSTART;VALUE=DATE:20261107
 DTEND;VALUE=DATE:20261108
 SUMMARY:WWE Crown Jewel
 DESCRIPTION:Network: ESPN
-LOCATION:TBA\, Riyadh\, Saudi Arabia
+LOCATION:Kingdom Arena\, Riyadh\, Saudi Arabia
 END:VEVENT
 BEGIN:VEVENT
 UID:wrestling-aew-full-gear-2026-11-14@mmalinconico.github.io
