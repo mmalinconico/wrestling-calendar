@@ -51,6 +51,16 @@ DESCRIPTION:Network: PPV
 LOCATION:Boeing Center at Tech Port\, San Antonio\, Texas
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-nxt-tlc-tables-ladders-chairs-2026-12-12@mmalinconico.github.
+ io
+DTSTAMP:20261101T040601Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:NXT TLC: Tables\, Ladders & Chairs
+DESCRIPTION:Network: The CW
+LOCATION:WWE Performance Center\, Orlando\, Florida
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-wwe-wrestlepalooza-2026-12-12@mmalinconico.github.io
 DTSTAMP:20260828T040003Z
 DTSTART;VALUE=DATE:20261212
