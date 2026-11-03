@@ -70,6 +70,24 @@ DESCRIPTION:Network: ESPN
 LOCATION:RAC Arena\, Perth\, Western Australia\, Australia
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-aaa-worlds-collide-doomsday-2026-12-15@mmalinconico.github.io
+DTSTAMP:20261103T185856Z
+DTSTART;VALUE=DATE:20261215
+DTEND;VALUE=DATE:20261216
+SUMMARY:AAA Worlds Collide: Doomsday
+DESCRIPTION:Network: YouTube
+LOCATION:ESPN Wide World of Sports Complex\, Kissimmee\, Florida\, U.S.
+END:VEVENT
+BEGIN:VEVENT
+UID:wrestling-wwe-aaa-worlds-collide-2026-12-15@mmalinconico.github.io
+DTSTAMP:20261103T185856Z
+DTSTART;VALUE=DATE:20261215
+DTEND;VALUE=DATE:20261216
+SUMMARY:WWE/AAA Worlds Collide
+DESCRIPTION:Network: YouTube
+LOCATION:ESPN Wide World of Sports Complex\, Kissimmee\, Florida
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-aew-worlds-end-2026-12-19@mmalinconico.github.io
 DTSTAMP:20260927T161920Z
 DTSTART;VALUE=DATE:20261219
