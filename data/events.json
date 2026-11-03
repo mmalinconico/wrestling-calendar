@@ -80,6 +80,16 @@
     "dtstamp": "20260927T161920Z"
   },
   {
+    "name": "Royal Rumble",
+    "date": "2027-02-06",
+    "venue": "State Farm Stadium",
+    "city": "Glendale, Arizona",
+    "network": "ESPN",
+    "promotion": "WWE",
+    "uid": "wrestling-wwe-royal-rumble-2027-02-06@mmalinconico.github.io",
+    "dtstamp": "20261103T015740Z"
+  },
+  {
     "name": "Dynasty",
     "date": "2027-02-07",
     "city": "Liverpool, England",

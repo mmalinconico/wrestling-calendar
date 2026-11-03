@@ -79,6 +79,15 @@ DESCRIPTION:Network: PPV
 LOCATION:Target Center\, Minneapolis\, Minnesota
 END:VEVENT
 BEGIN:VEVENT
+UID:wrestling-wwe-royal-rumble-2027-02-06@mmalinconico.github.io
+DTSTAMP:20261103T015740Z
+DTSTART;VALUE=DATE:20270206
+DTEND;VALUE=DATE:20270207
+SUMMARY:WWE Royal Rumble
+DESCRIPTION:Network: ESPN
+LOCATION:State Farm Stadium\, Glendale\, Arizona
+END:VEVENT
+BEGIN:VEVENT
 UID:wrestling-aew-dynasty-2027-02-07@mmalinconico.github.io
 DTSTAMP:20260831T184141Z
 DTSTART;VALUE=DATE:20270207
