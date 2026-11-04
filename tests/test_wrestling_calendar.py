@@ -520,7 +520,8 @@ class SafetyAndIdentityRules(unittest.TestCase):
                 f.guard_upcoming_event_losses(
                     [event("Worlds Collide", "2026-12-15", "WWE/AAA",
                            venue="ESPN Wide World of Sports Complex")],
-                    [different_venue],
+                    [event("Worlds Collide: Doomsday", "2027-12-15", "AAA",
+                           venue="Different Arena")],
                 )
 
         different_date = event(
