@@ -353,6 +353,40 @@ class DateAndSourceRules(unittest.TestCase):
 
 
 class SafetyAndIdentityRules(unittest.TestCase):
+    def test_december_15_weekly_nxt_is_excluded(self):
+        for name, promotion in (
+            ("Worlds Collide", "WWE/AAA"),
+            ("Worlds Collide: Doomsday", "AAA"),
+        ):
+            with self.subTest(name=name):
+                self.assertTrue(f.is_excluded_weekly_tv(
+                    event(name, "2026-12-15", promotion)
+                ))
+        self.assertFalse(f.is_excluded_weekly_tv(
+            event("Worlds Collide", "2027-12-15", "WWE/AAA")
+        ))
+        self.assertFalse(f.is_excluded_weekly_tv(
+            event("Worlds Collide", "2026-12-16", "WWE/AAA")
+        ))
+        self.assertFalse(f.is_excluded_weekly_tv(
+            event("Different Special", "2026-12-15", "NXT")
+        ))
+
+    def test_only_reviewed_weekly_taping_may_disappear(self):
+        previous = [
+            event("Worlds Collide", "2026-12-15", "WWE/AAA"),
+            event("Worlds Collide: Doomsday", "2026-12-15", "AAA"),
+            event("Survivor Series", "2026-11-28", "WWE"),
+        ]
+        with mock.patch.object(f, "calendar_today",
+                               return_value=date(2026, 11, 4)):
+            f.guard_upcoming_event_losses(
+                [event("Survivor Series", "2026-11-28", "WWE")],
+                previous,
+            )
+            with self.assertRaisesRegex(RuntimeError, "Survivor Series"):
+                f.guard_upcoming_event_losses([], previous)
+
     def test_missing_one_future_event_blocks_publication(self):
         previous = [event("Crown Jewel"), event("Survivor Series", "2026-11-28")]
         current = [event("Crown Jewel")]
