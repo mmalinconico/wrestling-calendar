@@ -437,6 +437,68 @@ class SafetyAndIdentityRules(unittest.TestCase):
         self.assertEqual(removed, 1)
         self.assertEqual([x["promotion"] for x in result], ["WWE/AAA"])
 
+    def test_wwe_aaa_subtitle_alias_is_one_event(self):
+        wwe = event(
+            "Worlds Collide", "2026-12-15", "WWE",
+            venue="ESPN Wide World of Sports Complex",
+        )
+        aaa = event(
+            "Worlds Collide: Doomsday", "2026-12-15", "AAA",
+            venue="ESPN Wide World of Sports Complex",
+            network="YouTube",
+        )
+        remaining, suppressed = f.suppress_aaa_duplicates([wwe, aaa])
+        self.assertEqual(suppressed, 1)
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0]["name"], "Worlds Collide")
+        self.assertEqual(remaining[0]["promotion"], "WWE/AAA")
+        self.assertEqual(remaining[0]["network"], "YouTube")
+
+        previous = [
+            event("Worlds Collide", "2026-12-15", "WWE/AAA",
+                  venue="ESPN Wide World of Sports Complex"),
+            aaa,
+        ]
+        with mock.patch.object(f, "calendar_today",
+                               return_value=date(2026, 11, 4)):
+            f.guard_upcoming_event_losses(remaining, previous)
+
+        previous[0]["uid"] = "existing-worlds-collide@example.com"
+        f.assign_stable_metadata(remaining, previous)
+        self.assertEqual(remaining[0]["uid"], previous[0]["uid"])
+
+    def test_subtitle_alias_requires_same_date_and_venue(self):
+        wwe = event("Worlds Collide", "2026-12-15", "WWE",
+                    venue="ESPN Wide World of Sports Complex")
+        different_venue = event(
+            "Worlds Collide: Doomsday", "2026-12-15", "AAA",
+            venue="Different Arena",
+        )
+        remaining, suppressed = f.suppress_aaa_duplicates(
+            [wwe, different_venue]
+        )
+        self.assertEqual(suppressed, 0)
+        self.assertEqual(len(remaining), 2)
+        self.assertEqual(wwe["promotion"], "WWE")
+        with mock.patch.object(f, "calendar_today",
+                               return_value=date(2026, 11, 4)):
+            with self.assertRaisesRegex(RuntimeError, "Doomsday"):
+                f.guard_upcoming_event_losses(
+                    [event("Worlds Collide", "2026-12-15", "WWE/AAA",
+                           venue="ESPN Wide World of Sports Complex")],
+                    [different_venue],
+                )
+
+        different_date = event(
+            "Worlds Collide: Doomsday", "2026-12-16", "AAA",
+            venue="ESPN Wide World of Sports Complex",
+        )
+        remaining, suppressed = f.suppress_aaa_duplicates(
+            [wwe, different_date]
+        )
+        self.assertEqual(suppressed, 0)
+        self.assertEqual(len(remaining), 2)
+
     def test_exact_event_deduplication(self):
         first = event("Crown Jewel")
         second = dict(first)
