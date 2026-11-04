@@ -1609,6 +1609,22 @@ def matching_wwe_aaa_source_events(wwe_event, aaa_event):
     )
 
 
+# Explicitly excluded: the December 15 listing is a regular NXT TV
+# taping, not a standalone WWE/AAA special. Keep the exclusion scoped to
+# these source titles and this date; other Worlds Collide events remain valid.
+EXCLUDED_WEEKLY_TV = {
+    ("2026-12-15", "worlds collide"),
+    ("2026-12-15", "worlds collide: doomsday"),
+}
+
+
+def is_excluded_weekly_tv(event):
+    return (
+        event.get("_source_date") or event.get("date"),
+        normalize_text(event.get("name", "")),
+    ) in EXCLUDED_WEEKLY_TV
+
+
 def suppress_aaa_duplicates(events):
     """Emit one WWE/AAA event when WWE and AAA list the same physical show."""
     wwe_events = [
@@ -1680,6 +1696,10 @@ def guard_upcoming_event_losses(events, previous_events):
         previous_date = parse_stored_date(previous)
         if previous_date is None or previous_date <= today:
             continue
+        # Only the explicitly reviewed weekly-TV listing may be removed.
+        # All other missing future events must still stop publication.
+        if is_excluded_weekly_tv(previous):
+            continue
 
         previous_name = normalize_text(previous.get("name", ""))
         matched = any(
@@ -1744,6 +1764,11 @@ def main():
     events.extend(scrape_aaa(previous_events))
     events.extend(scrape_aew(previous_events))
     events.extend(scrape_roh(previous_events))
+
+    excluded_weekly_count = sum(is_excluded_weekly_tv(event) for event in events)
+    events = [event for event in events if not is_excluded_weekly_tv(event)]
+    if excluded_weekly_count:
+        print(f"Excluded {excluded_weekly_count} regular TV listing(s)")
 
     events, suppressed_aaa_count = suppress_aaa_duplicates(events)
     events = deduplicate_events(events)
