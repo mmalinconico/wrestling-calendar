@@ -1571,30 +1571,70 @@ def retain_recent_past_events(events, previous_events):
     return retained_count
 
 
-def suppress_aaa_duplicates(events):
-    """Prefer WWE/AAA when the same named physical event also comes from AAA."""
-    wwe_aaa_keys = {
-        (
-            normalize_text(event.get("name", "")),
-            event.get("_source_date") or event.get("date", ""),
-        )
-        for event in events
-        if event.get("promotion") == "WWE/AAA"
-    }
+def subtitle_variant_names(first_name, second_name):
+    """Recognize the same event with an added colon subtitle."""
+    first = normalize_text(first_name)
+    second = normalize_text(second_name)
+    return (
+        first.startswith(second + ":")
+        or second.startswith(first + ":")
+    )
 
+
+def matching_wwe_aaa_source_events(wwe_event, aaa_event):
+    """Match physical events across WWE and AAA, including titled variants."""
+    if (
+        wwe_event.get("promotion") not in {"WWE", "WWE/AAA"}
+        or aaa_event.get("promotion") != "AAA"
+    ):
+        return False
+
+    wwe_date = wwe_event.get("_source_date") or wwe_event.get("date")
+    if wwe_date != aaa_event.get("date"):
+        return False
+
+    if normalize_text(wwe_event.get("name", "")) == normalize_text(
+        aaa_event.get("name", "")
+    ):
+        return True
+
+    return (
+        subtitle_variant_names(
+            wwe_event.get("name", ""),
+            aaa_event.get("name", ""),
+        )
+        and bool(normalize_text(wwe_event.get("venue", "")))
+        and normalize_text(wwe_event.get("venue", ""))
+        == normalize_text(aaa_event.get("venue", ""))
+    )
+
+
+def suppress_aaa_duplicates(events):
+    """Emit one WWE/AAA event when WWE and AAA list the same physical show."""
+    wwe_events = [
+        event for event in events
+        if event.get("promotion") in {"WWE", "WWE/AAA"}
+    ]
     filtered_events = []
     suppressed_count = 0
 
     for event in events:
-        duplicate_key = (
-            normalize_text(event.get("name", "")),
-            event.get("date", ""),
-        )
+        if event.get("promotion") != "AAA":
+            filtered_events.append(event)
+            continue
 
-        if (
-            event.get("promotion") == "AAA"
-            and duplicate_key in wwe_aaa_keys
-        ):
+        matches = [
+            wwe for wwe in wwe_events
+            if matching_wwe_aaa_source_events(wwe, event)
+        ]
+        if len(matches) == 1:
+            wwe = matches[0]
+            # Both source schedules independently list the same event.
+            # Retain WWE's existing name and UID, even if Wikipedia has
+            # temporarily lost its co-produced row color.
+            if wwe.get("promotion") == "WWE":
+                wwe["promotion"] = "WWE/AAA"
+                wwe["network"] = "YouTube"
             suppressed_count += 1
             continue
 
@@ -1643,7 +1683,21 @@ def guard_upcoming_event_losses(events, previous_events):
 
         previous_name = normalize_text(previous.get("name", ""))
         matched = any(
-            normalize_text(event.get("name", "")) == previous_name
+            (
+                normalize_text(event.get("name", "")) == previous_name
+                or (
+                    previous.get("promotion") == "AAA"
+                    and event.get("promotion") == "WWE/AAA"
+                    and event.get("date") == previous.get("date")
+                    and bool(normalize_text(previous.get("venue", "")))
+                    and normalize_text(event.get("venue", ""))
+                    == normalize_text(previous.get("venue", ""))
+                    and subtitle_variant_names(
+                        previous.get("name", ""),
+                        event.get("name", ""),
+                    )
+                )
+            )
             and abs((parse_stored_date(event) - previous_date).days)
             <= MAX_RESCHEDULE_MATCH_DAYS
             for event in current
