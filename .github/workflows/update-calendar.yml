@@ -3,7 +3,7 @@ name: Update Wrestling Calendar
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '17 */4 * * *'
 
 permissions:
   contents: write
